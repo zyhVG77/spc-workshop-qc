@@ -1,0 +1,545 @@
+﻿<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Meta -->
+		<meta name="description" content="Responsive Bootstrap4 Dashboard Template">
+		<meta name="author" content="ParkerThemes">
+		<link rel="shortcut icon" href="img/fav.png" />
+
+		<!-- Title -->
+		<title>车间生产质量管理</title>
+
+
+		<!-- *************
+			************ Common Css Files *************
+		************ -->
+		<!-- Bootstrap css -->
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<!-- Icomoon Font Icons css -->
+		<link rel="stylesheet" href="fonts/style.css">
+		<!-- Main css -->
+		<link rel="stylesheet" href="css/main.css">
+		<!-- Chat css -->
+		<link rel="stylesheet" href="css/chat.css">
+
+		<!-- *************
+			************ Vendor Css Files *************
+		************ -->
+		
+	</head>
+
+	<body>
+
+		<!-- Loading starts -->
+		<div id="loading-wrapper">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+		<!-- Loading ends -->
+		
+		<!-- Page wrapper start -->
+		<div class="page-wrapper">
+			
+			<!-- Sidebar wrapper start -->
+			<nav id="sidebar" class="sidebar-wrapper">
+
+				<!-- Sidebar brand start  -->
+				<div class="sidebar-brand">
+					<!-- <a href="index.html" class="logo">
+						<img src="img/logo.png" alt="Logo" />
+					</a> -->
+					<a href="index.html" class="logo">车间生产质量管理</a>
+				</div>
+				<!-- Sidebar brand end  -->
+				
+				<!-- User profile start -->
+				<div class="sidebar-user-details">
+					<div class="user-profile">
+						<img src="img/user2.png" class="profile-thumb" alt="User Thumb">
+						<span class="status-label"></span>
+					</div>
+					<h6 class="profile-name">Yuki Hayashi</h6>
+					<div class="profile-actions">
+						<a href="account-settings.html" data-toggle="tooltip" data-placement="top" title="" data-original-title="Settings">
+							<i class="icon-settings1"></i>
+						</a>
+						<a href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="" data-original-title="Twitter">
+							<i class="icon-twitter1"></i>
+						</a>
+						<a href="../login.html" class="red" data-toggle="tooltip" data-placement="top" title="" data-original-title="Logout">
+							<i class="icon-power1"></i>
+						</a>
+					</div>					
+				</div>
+				<!-- User profile end -->
+
+				<!-- Sidebar content start -->
+				<div class="sidebar-content">
+
+					<!-- sidebar menu start -->
+				    <div class="sidebar-menu">
+					    <ul>
+						    <li class="sidebar-dropdown active">
+							    <a href="#">
+									<i class="icon-home2"></i>
+									<span class="menu-text">零件</span>
+								</a>
+								<div class="sidebar-submenu">
+									<ul>
+									    <li class="dropdown">
+										    <button type="button" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">齿轮
+                                                <span class="caret"></span>
+                                            </button>
+										    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+											    <li role="presentation"><a href="index.html" class="current-page">直径</a></li>
+											    <li role="presentation"><a href="index2.html" class="current-page">粗糙度</a></li>
+											    <li role="presentation"><a href="index.html" class="current-page">齿数</a></li> <li role="presentation"><a href="addComponent.html" class="glyphicon glyphicon-plus" style="color:blue">添加属性</a></li>
+											</ul>
+										</li>
+										
+										<li class="dropdown">
+                                            <button type="button" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">离合器
+                                                <span class="caret"></span>
+                                            </button>
+							                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+								                <li role="presentation"><a href="index.html" class="current-page">摩擦片尺寸</a></li>
+									            <li role="presentation"><a href="addComponent.html" class="glyphicon glyphicon-plus" style="color:blue">添加属性</a></li>
+								            </ul> 
+									   </li>
+									   
+									   <li class="dropdown">
+										    <button type="button" class="btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">汽车轴承
+                                                <span class="caret"></span>
+                                            </button>
+										    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+											    <li role="presentation"><a href="index.html" class="current-page">滚道硬度</a></li>
+											    <li role="presentation"><a href="index2.html" class="current-page">粗糙度</a></li>
+											    <li role="presentation"><a href="index.html" class="current-page">齿数</a></li> 
+											    <li role="presentation"><a href="addComponent.html" class="glyphicon glyphicon-plus" style="color:blue">添加属性</a></li>
+											</ul>
+										</li>
+									</ul>
+							    </div>
+						    
+					        <li >
+					            <a href="addComponent.html">
+							        <i class="icon-plus-circle"></i>
+							        <span class="menu-text">添加零件</span>
+							    </a>
+							</li>
+								
+							<li>
+								<a href="./analysis-reports.html">
+									<i class="icon-bell"></i>
+									<span class="menu-text">异常警报</span>
+								</a>
+							</li>
+						
+	                       	<li>
+								<a href="./sharefiles.html">
+									<i class="icon-circular-graph"></i>
+									<span class="menu-text">共享数据</span>
+								</a>
+							</li>
+							<li>
+								<a href="./account-settings.html">
+									<i class="icon-user1"></i>
+									<span class="menu-text">账户设置</span>
+								</a>
+							</li>
+							<li>
+								<a href="../warehouse/index.html">
+									<i class="icon-corner-down-right"></i>
+									<span class="menu-text">进入仓储管理</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<!-- sidebar menu end -->
+
+				</div>
+				<!-- Sidebar content end -->
+				
+			</nav>
+			<!-- Sidebar wrapper end -->
+
+			<!-- Page content start  -->
+			<div class="page-content">				
+				<!-- Header start -->
+				<header class="header">
+				   <div></div>
+					<div class="header-items" >
+
+						<!-- Header actions start -->
+						<ul class="header-actions">
+						   <a href = ./analysis-reports.html><i class="icon-calendar1"></i>
+						   </a>
+							<li class="dropdown d-none d-sm-block">
+								<a href="#" id="notifications" data-toggle="dropdown" aria-haspopup="true">
+									<i class="icon-bell"></i>
+									<span class="count-label"></span>
+								</a>
+								<div class="dropdown-menu dropdown-menu-right lrg" aria-labelledby="notifications">
+									<div class="dropdown-menu-header">
+										异常警报 (3)
+									</div>
+									<ul class="header-notifications">
+										<li>
+											<a href="search-results">
+												<div class="user-img away">
+													 <span class="glyphicon glyphicon-cog"></span> 
+												</div>
+												<div class="details">
+													<div class="user-title">齿轮</div>
+													<div class="noti-details">温度异常报告</div>
+													<div class="noti-date">Oct 20, 07:30 pm</div>
+												</div>
+											</a>
+										</li>
+										<li>
+											<a href="search-results1">
+												<div class="user-img busy">
+													<span class="glyphicon glyphicon-cog"></span> 
+												</div>
+												<div class="details">
+													<div class="user-title">离合器</div>
+													<div class="noti-details">直径异常报告</div>
+													<div class="noti-date">Oct 10, 12:00 am</div>
+												</div>
+											</a>
+										</li>
+										<li>
+											<a href="search-results2">
+												<div class="user-img online">
+													<span class="glyphicon glyphicon-cog"></span>
+												</div>
+												<div class="details">
+													<div class="user-title">汽车轴承</div>
+													<div class="noti-details">直径误差异常报告</div>
+													<div class="noti-date">Oct 15, 04:00 pm</div>
+												</div>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li class="dropdown user-settings">
+								<a href="#" id="userSettings" data-toggle="dropdown" aria-haspopup="true">
+									<img src="img/user2.png" class="user-avatar" alt="Avatar">
+								</a>
+								<div class="dropdown-menu dropdown-menu-right" aria-labelledby="userSettings">
+									<div class="header-profile-actions">
+										<div class="header-user-profile">
+											<div class="header-user">
+												<img src="img/user2.png" alt="Admin Template">
+											</div>
+											<h5>Yuki Hayashi</h5>
+											<p>Super User</p>
+										</div>
+										<a href="account-settings.html"><i class="icon-settings1"></i> 账户设置</a>
+										<a href="../login.html"><i class="icon-log-out1"></i> 退出</a>
+									</div>
+								</div>
+							</li>
+						</ul>						
+						<!-- Header actions end -->
+					</div>
+				</header>
+				<!-- Header end -->
+
+				<!-- Main container start -->
+				<div class="main-container">
+
+					<!-- Page header start -->
+					<div class="page-header">
+						
+						<!-- Breadcrumb start -->
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">Welcome！</li>
+						</ol>
+						<!-- Breadcrumb end -->
+
+						<!-- App actions start -->
+						<div class="app-actions">
+							<button type="button" class="btn">车间一</button>
+							<button type="button" class="btn">车间二</button>
+							<button type="button" class="btn">车间三</button>
+							<button type="button" class="btn">车间四</button>
+							<button type="button" class="btn active">车间五</button>
+						</div>
+						<!-- App actions end -->
+
+					</div>
+					<!-- Page header end -->
+
+					<!-- Row start -->
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				        <div class="card">
+						    <div class="card-header">
+								<div class="card-title">选择批数</div>
+							</div>
+							<div class="card-body">
+							    <div class="row gutters">
+									<div class="col-xl-3 col-lg col-md-3 col-sm-3 col-12">
+										<div class="form-group">
+										    <label for="inputPwd">年</label>
+											<select class="form-control ">
+													<option>2020</option>
+													<option>2019</option>
+													<option>2017</option>
+												</select>
+										</div>
+									</div>
+									<div class="col-xl-3 col-lg col-md-3 col-sm-3 col-12">
+										<div class="form-group">
+										    <label for="inputPwd">月</label>
+											<select class="form-control">
+												<option>1</option>
+												<option>2</option>
+												<option>3</option>
+												<option>4</option>
+												<option>5</option>
+												<option>6</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-xl-3 col-lg col-md-3 col-sm-3 col-12">
+									    <div class="form-group">
+										  <label for="inputPwd">日</label>
+												<select class="form-control ">
+												    <option>1</option>
+												    <option>2</option>
+												    <option>3</option>
+												    <option>4</option>
+												    <option>5</option>
+												    <option>6</option>
+											    </select>
+										</div>
+									</div>
+									<div class="col-xl-3 col-lg col-md-3 col-sm-3 col-12">
+									    <div class="form-group">
+										  <label for="inputPwd">批数</label>
+												<select class="form-control ">
+												    <option>1</option>
+												    <option>2</option>
+												    <option>3</option>
+												    <option>4</option>
+												    <option>5</option>
+												    <option>6</option>
+											    </select>
+										</div>
+									</div>
+									
+									<div class = "col-xl-3 col-lg col-md-3 col-sm-3 col-12" >
+									    <label for="inputPwd"></label>
+									    <a class="btn btn-success btn-lg" href="./index1.html" role="button">提交</a>
+									</div>
+							    </div>
+						    </div>
+					    </div>
+				    </div>
+												                
+					<!-- Row end -->
+
+					<!-- Row start -->
+					<div class="row gutters">
+						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+							<div class="card">
+								<div class="card-header">
+									<div class="card-title">SPC控制图</div>
+								</div>
+								<div class="card-body">
+
+									<!-- Row start -->
+									<div class="row gutters align-items-center">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							                <div class="card">
+								                <div class="card-header">
+									                <div class="card-title">X-MR</div>
+								                </div>
+								                <div class="card-body">
+									                <div id="basic-line-graph"></div>
+								                </div>
+							                </div>
+						                </div>
+									</div>
+									<!-- Row end -->
+                                    <!-- Row start -->
+                                        <div class="pull-right" style="float:right">
+                                            <a class="btn btn-danger" href="./setparameter.html" role="button" data-toggle="modal" data-target="#myModal1" >设置SPC控制图参数</a>
+                                        </div>
+                                    <!-- Row end -->
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Row end -->
+					
+					<!-- Row start -->
+                    <div class="modal fade" id="myModal1">
+                        <div class="modal-dialog"></div>
+                        <div class="modal-body" >
+                          <div class="row gutters">
+						    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+							    <div class="card">
+							        <h4 class="card-header" style="text-align:center"> 设置SPC控制图参数 </h4>
+								    <div class="card-body">
+		                                <div class="col-xl-4 col-lglg-4 col-md-4 col-sm-4 col-12">
+								            <div class="form-group">
+									            <label for="inputEmail">SPC控制图类型</label>
+										        <select class="form-control ">
+											       <option>Xbar-R</option>
+										           <option>Xbar-S</option>
+										           <option>P图</option>
+										           <option>X-MR</option>
+											       <option>C图</option>
+											       <option>U图</option>
+										       </select>
+										      </div>
+										   </div>
+										   <div class="col-xl-4 col-lglg-4 col-md-4 col-sm-4 col-12">
+								            <div class="form-group">
+									            <label for="inputEmail">SPC控制图规格限C</label>
+                                                <input type="text" class="form-control" id="inputName" placeholder="">
+										      </div>
+										   </div>
+										   <div class="col-xl-4 col-lglg-4 col-md-4 col-sm-4 col-12">
+								            <div class="form-group">
+									            <label for="inputEmail">SPC控制图规格限T</label>
+                                                <input type="text" class="form-control" id="inputName" placeholder="">
+										      </div>
+										   </div>
+										   		                                <div class="col-xl-4 col-lglg-4 col-md-4 col-sm-4 col-12">
+								            <div class="form-group">
+									            <label for="inputEmail">SPC控制图采样间隔</label>
+										        <select class="form-control ">
+											       <option>3h</option>
+										           <option>6h</option>
+										           <option>8h</option>
+										           <option>12h</option>
+											       <option>24h</option>
+										       </select>
+										      </div>
+										   </div>
+										   
+										   <div style="text-align:center">
+										     <button type="button" class="btn btn-success" data-dismiss="modal">提交</button>
+                                             <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                                           </div>
+                                         </div>
+									 </div>
+							</div>
+					    </div>
+					   </div>
+                    </div>
+         
+                    <!-- Row end -->
+
+                    
+                    <!-- Row start -->
+                    <ol class="breadcrumb">
+				       <li class="breadcrumb-item">修改属性详情</li>
+				    </ol>
+                    <!-- Row end -->
+                    
+					<!-- Row start -->
+					<div class="row gutters">
+						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+							<div class="card">
+								<div class="card-body">
+									
+									<div class="row gutters">
+										<div class="col-xl-4 col-lglg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="inputName">单位设置</label>
+												<input type="text" class="form-control" id="inputName" placeholder="m">
+											</div>
+										</div>
+										<div class="col-xl-4 col-lglg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="inputEmail">型号设置</label>
+												<input type="text" class="form-control" id="inputEmail" placeholder="01">
+											</div>
+										</div>
+										<div class="col-xl-4 col-lglg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="inputPwd">计算方法设置</label>
+												<div class="form-group">
+												<select class="form-control form-control-lg">
+													<option>默认</option>
+													<option>高度/宽度</option>
+													<option>（温度+湿度）* 消耗天数</option>
+													<option>直径+面积</option>
+												</select>
+											</div>
+											</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						</div>
+					</div>
+					<!-- Row end -->
+
+			</div>
+			<!-- Page content end -->
+
+		</div>
+		<!-- Page wrapper end -->
+
+		<!--**************************
+			**************************
+				**************************
+							Required JavaScript Files
+				**************************
+			**************************
+		**************************-->
+		<!-- Required jQuery first, then Bootstrap Bundle JS -->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.bundle.min.js"></script>
+		<script src="js/moment.js"></script>
+
+
+		<!-- *************
+			************ Vendor Js Files *************
+		************* -->
+		<!-- Slimscroll JS -->
+		<script src="vendor/slimscroll/slimscroll.min.js"></script>
+		<script src="vendor/slimscroll/custom-scrollbar.js"></script>
+
+		<!-- Polyfill JS -->
+		<script src="vendor/polyfill/polyfill.min.js"></script>
+		<script src="vendor/polyfill/class-list.min.js"></script>
+
+		<!-- Apex Charts -->
+		<script src="vendor/apex/apexcharts.min.js"></script>
+		<script src="vendor/apex/custom/home/lineRevenueGradientGraph.js"></script>
+		<script src="vendor/apex/custom/home/radialTasks.js"></script>
+		<script src="vendor/apex/custom/home/lineNewCustomersGradientGraph.js"></script>
+		
+		<!-- Peity Charts -->
+		<script src="vendor/peity/peity.min.js"></script>
+		<script src="vendor/peity/custom-peity.js"></script>
+		
+		<!-- Circleful Charts -->
+		<script src="vendor/circliful/circliful.min.js"></script>
+		<script src="vendor/circliful/circliful.custom.js"></script>
+		
+		<!-- Main JS -->
+		<script src="js/main.js"></script>
+		
+		<!-- Line Graphs -->
+		<script src="vendor/apex/examples/line/basic-line-graph2.js"></script>
+		
+		<!-- 弹出框 -->
+		<script>$('#myModal1').modal(show)</script>
+
+	</body>
+</html>
