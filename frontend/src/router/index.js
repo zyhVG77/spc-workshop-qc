@@ -8,17 +8,7 @@ export const constantRouterMap = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/common/Login')
-  },
-  {
-    path: '/test1',
-    name: 'Test1',
-    component: () => import('@/views/PutInForm')
-  },
-  {
-    path: '/test2',
-    name: 'Test2',
-    component: () => import('@/views/UserManage')
-  },
+  }
 ]
 
 export const asyncRouterMap = [
