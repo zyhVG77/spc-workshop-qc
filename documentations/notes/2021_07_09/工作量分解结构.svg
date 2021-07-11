@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- 由 Microsoft Visio, SVG Export 生成 绘图1.svg Page-1 -->
+<!-- 由 Microsoft Visio, SVG Export 生成 工作量分解结构.svg Page-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="22.8858in" height="16.0354in"
 		viewBox="0 0 1647.78 1154.55" xml:space="preserve" color-interpolation-filters="sRGB" class="st21">
@@ -1239,39 +1239,56 @@
 			</v:userDefs>
 			<path d="M0 1147.46 L11.53 1147.46" class="st19"/>
 		</g>
-		<g id="shape152-473" v:mID="152" v:groupContext="shape" transform="translate(1299.68,-734.071)">
-			<title>矩形.152</title>
-			<desc>组织实施</desc>
+		<g id="shape156-473" v:mID="156" v:groupContext="shape" transform="translate(713.622,-504.303)">
+			<title>矩形.156</title>
+			<desc>测量控制计划</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="37.5591" cy="1140.33" width="75.12" height="28.4338"/>
+			<rect x="0" y="1126.12" width="75.1181" height="28.4338" class="st1"/>
+			<text x="7.56" y="1143.66" class="st5" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>测量控制计划</text>		</g>
+		<g id="shape157-476" v:mID="157" v:groupContext="shape" v:layerMember="0" transform="translate(697.323,-908.52)">
+			<title>动态连接线.157</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<path d="M0 1154.55 L0 1544.55 L16.3 1544.55" class="st4"/>
+		</g>
+		<g id="shape158-479" v:mID="158" v:groupContext="shape" transform="translate(760.081,-463.095)">
+			<title>矩形.158</title>
+			<desc>前端逻辑</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="37.5591" cy="1146.44" width="75.12" height="16.2168"/>
-			<rect x="0" y="1138.33" width="75.1181" height="16.2168" class="st13"/>
-			<text x="17.56" y="1149.77" class="st7" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>组织实施</text>		</g>
-		<g id="shape153-476" v:mID="153" v:groupContext="shape" v:layerMember="0" transform="translate(1286.22,-908.52)">
-			<title>动态连接线.153</title>
+			<rect x="0" y="1138.33" width="75.1181" height="16.2168" class="st6"/>
+			<text x="17.56" y="1149.77" class="st7" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>前端逻辑</text>		</g>
+		<g id="shape159-482" v:mID="159" v:groupContext="shape" v:layerMember="0" transform="translate(748.544,-504.303)">
+			<title>动态连接线.159</title>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
-			<path d="M0.71 1154.55 L0.71 1320.89 L13.46 1320.89" class="st12"/>
+			<path d="M2.64 1154.55 L2.64 1187.65 L11.54 1187.65" class="st12"/>
 		</g>
-		<g id="shape154-479" v:mID="154" v:groupContext="shape" transform="translate(1388.98,-731.039)">
-			<title>圆形.154</title>
+		<g id="shape160-485" v:mID="160" v:groupContext="shape" transform="translate(856.458,-460.063)">
+			<title>圆形.160</title>
 			<desc>1</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="11.1408" cy="1143.41" width="19.5" height="16.7112"/>
-			<path d="M0 1143.41 A11.1408 11.1408 0 0 1 22.28 1143.41 A11.1408 11.1408 0 1 1 0 1143.41 Z" class="st17"/>
+			<path d="M0 1143.41 A11.1408 11.1408 0 0 1 22.28 1143.41 A11.1408 11.1408 0 1 1 -0 1143.41 Z" class="st17"/>
 			<text x="8.61" y="1146.41" class="st18" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>1</text>		</g>
-		<g id="shape155-482" v:mID="155" v:groupContext="shape" v:layerMember="0" transform="translate(1374.8,-735.093)">
-			<title>动态连接线.155</title>
+		<g id="shape161-488" v:mID="161" v:groupContext="shape" v:layerMember="0" transform="translate(835.199,-464.117)">
+			<title>动态连接线.161</title>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
 			</v:userDefs>
-			<path d="M0 1147.46 L11.53 1147.46" class="st19"/>
+			<path d="M0 1147.46 L18.62 1147.46" class="st19"/>
 		</g>
 	</g>
 </svg>
