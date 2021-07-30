@@ -123,7 +123,7 @@ const WarehouseApi = {
     },
     // Control graph
     getControlGraph: function (data, success, fail) {
-        axios.get("/api/warehouse/getControlGraph")
+        axios.post("/api/warehouse/getControlGraph", data)
             .then(resp => {
                 if (resp.data.option)
                     success(resp.data.option)
