@@ -8,6 +8,11 @@ export const constantRouterMap = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/common/Login')
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    component: () => import('@/views/warehouse/ControlGraph')
   }
 ]
 
@@ -148,17 +153,31 @@ export const asyncRouterMap = [
         //   }
         // ]
       },
+      // {
+      //   path: 'controlSchedule',
+      //   name: 'ControlSchedule',
+      //   component: () => import('@/views/warehouse/ControlSchedule'),
+      //   meta: {
+      //     role: ['admin', 'warehouse_keeper'],
+      //     isSidebarItem: true,
+      //     subsystem: 'warehouse',
+      //     sidebarInfo: {
+      //       name: '控制计划管理',
+      //       iconClass: 'icon-plus-circle'
+      //     }
+      //   }
+      // },
       {
-        path: 'controlSchedule',
-        name: 'ControlSchedule',
-        component: () => import('@/views/warehouse/ControlSchedule'),
+        path: 'controlGraphWarehouse',
+        name: 'ControlGraphWarehouse',
+        component: () => import('@/views/warehouse/ControlGraph'),
         meta: {
           role: ['admin', 'warehouse_keeper'],
           isSidebarItem: true,
           subsystem: 'warehouse',
           sidebarInfo: {
-            name: '控制计划管理',
-            iconClass: 'icon-plus-circle'
+            name: '质量控制',
+            iconClass: 'icon-bell'
           }
         }
       },

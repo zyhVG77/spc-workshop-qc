@@ -121,38 +121,18 @@ const WarehouseApi = {
           })
           .catch(() => error('请求失败！'))
     },
-    // Control Plan Management
-    submitControlPlan: function (controlPlan, success, error) {
-        axios.post('/api/warehouse/SubmitControlPlan', { controlPlan })
+    // Control graph
+    getControlGraph: function (data, success, fail) {
+        axios.get("/api/warehouse/getControlGraph")
             .then(resp => {
-                if (resp.data.status === 'success')
-                    success()
+                if (resp.data.option)
+                    success(resp.data.option)
+                else if (resp.data.html)
+                    success(resp.data.html)
                 else
-                    error(resp.data.errorMsg)
+                    fail()
             })
-            .catch(() => {
-                error('请求失败！')
-            })
-    },
-    getControlPlans: function (success, error) {
-        axios.get('/api/warehouse/GetControlPlans')
-            .then(resp => {
-                if (resp.data.status === 'success')
-                    success()
-                else
-                    error(resp.data.errorMsg)
-            })
-            .catch(() => error('请求失败！'))
-    },
-    deleteControlPlan: function (id, success, error) {
-        axios.get('/api/warehouse/DeleteControlPlan')
-            .then(resp => {
-                if (resp.data.status === 'success')
-                    success()
-                else
-                    error(resp.data.errorMsg)
-            })
-            .catch(() => error('请求失败！'))
+            .catch(err => fail(err))
     }
 }
 
