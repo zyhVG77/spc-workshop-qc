@@ -73,6 +73,7 @@
 import DateRangePicker from "@/components/workshop/DateRangePicker";
 import * as echarts from 'echarts/core';
 import WorkshopApi from "@/api/workshop";
+import HintMessage from "@/components/utils/HintMessage";
 
 // E-charts configuration
 import {
@@ -89,7 +90,6 @@ import {
 import {
   CanvasRenderer
 } from 'echarts/renderers';
-import HintMessage from "@/components/utils/HintMessage";
 
 echarts.use(
     [TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, MarkLineComponent, LineChart, CanvasRenderer]

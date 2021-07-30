@@ -27,6 +27,7 @@ const mutations = {
     logout(state) {
         state.status = ''
         state.token = ''
+        state.user = null
     },
     updateUser(state, user) {
         console.log('Here in mutations')
@@ -63,6 +64,7 @@ const actions = {
             commit('logout')
             try {
                 localStorage.removeItem('token')
+                console.log(localStorage.getItem('token'))
                 delete axios.defaults.headers.common['Authorization']
                 resolve()
             } catch(err) {

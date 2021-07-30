@@ -10,22 +10,22 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/assets/css/main.css'
 import '@/assets/fonts/style.css'
 
-Vue.use(VueAxios, axios);
-Vue.config.productionTip = false;
+Vue.use(VueAxios, axios)
+Vue.config.productionTip = false
 
 /*
   Add a request interceptor so that
   every request will be sent with token.
 */
 axios.interceptors.request.use(function (config) {
-  let token = localStorage.getItem("token");
+  let token = localStorage.getItem("token")
   if (token) {
-    config.headers.common["Authentication"] = token;
+    config.headers.common["Authentication"] = token
   }
-  return config;
+  return config
 }, function (error) {
-  return Promise.reject(error);
-});
+  return Promise.reject(error)
+})
 
 /*
   Register a Navigation Guard
@@ -62,7 +62,7 @@ router.beforeEach((to, from, next) => {
 /*
     Monk Response Data For testing
 */
-// import monk from '@/mock/index'
+// import monk from '@/mock/mock_warehouse'
 // monk.startMonk()
 
 /*
