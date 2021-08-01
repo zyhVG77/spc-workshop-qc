@@ -33,6 +33,7 @@ TIMEZONE = None
 
 INSTALLED_APPS = [
     'workshop.apps.workshopConfig',
+    # 'warehouse.apps.warehouseConfig',
     'user.apps.UserConfig',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -16,6 +16,7 @@ def getStorageCells(user:user_account_info = None, **kwargs):
     warehouse_id = kwargs['warehouse_id']
     if warehouse_id == 'all':
         if user.role_warehouse == RoleChoices.ADMIN:
+            pass
 
 
 # ////////////////////////////////////////////////////////////
