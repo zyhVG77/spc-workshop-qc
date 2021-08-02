@@ -7,6 +7,7 @@ UNK = 'UNK' # 接口函数默认值
 SCALE = 1 # ecnarts数据图纵轴缩放程度
 MAXCOLSPAN = 10 # 详细分析报告中，一行最多能容纳的子组个数
 TEMPLATENAME = 'Report.html' # 渲染异常分析报告模板文件名 templates/Report.html
+CELLSPERPAGE = 100 # 展示储位时每页的储位个数
 # DEBUG = True # 后端程序运行时是否允许输出信息
 SPC_parameters = { # SPC控制图常数表
     'XR':{

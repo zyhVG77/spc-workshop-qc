@@ -38,6 +38,12 @@ class storage_cell_info(models.Model):
     occupy = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                  help_text='占用'
                                  )
+    def free(self):
+        if self.capacity == 0:
+            return 0
+        else:
+            return self.occupy/self.capacity
+    free.admin_order_field = 'free'
 
 class product_info(models.Model):
     uid = models.CharField(max_length=11,
@@ -58,6 +64,30 @@ class product_info(models.Model):
     def __str__(self):
         return self.name
 
+class storage_cell_product_relationship(models.Model):
+    uid = models.CharField(max_length=11,
+                           primary_key=True,
+                           validators=(validators.MinLengthValidator(11),),
+                           help_text='储位零件关系编号'
+                           )
+    storage_cell = models.ForeignKey(storage_cell_info, on_delete=models.CASCADE,
+                                     db_index=True,
+                                related_name="products_related",
+                                related_query_name='product_infos',
+                                help_text='关联储位'
+                                )
+    product = models.ForeignKey(product_info, on_delete=models.CASCADE,
+                                related_name='cells_related',
+                                help_text='关联零件'
+                                )
+    number = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                 help_text='存量'
+                                 )
+    time = models.DateTimeField(help_text='存储开始时间')
+
+# ////////////////////////////////////////////////////////////
+# 出入库测量相关
+# ////////////////////////////////////////////////////////////
 
 class entry_info(models.Model):
     uid = models.CharField(max_length=11,
@@ -71,24 +101,20 @@ class entry_info(models.Model):
                                 related_query_name='entry_infos',
                                 help_text='零件'
                                 )
-    cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,
+    cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,null=True,
                              db_index=True,
                              related_name="entry_info",
                              related_query_name='entry_infos',
-                             help_text='从属储位'
+                             help_text='从属储位',
                              )
     number = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                  help_text='入库数量'
                                  )
-    operator = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,
+    operator = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,null=True,
                                  related_name="entry_info",
                                  related_query_name='entry_infos',
                                  help_text='操作员'
                                  )
-
-# ////////////////////////////////////////////////////////////
-# 出入库测量相关
-# ////////////////////////////////////////////////////////////
 
 class shipment_info(models.Model):
     uid = models.CharField(max_length=11,
@@ -102,7 +128,7 @@ class shipment_info(models.Model):
                                 related_query_name='shipment_infos',
                                 help_text='零件'
                                 )
-    cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,
+    cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,null=True,
                              db_index=True,
                              related_name="shipment_info",
                              related_query_name='shipment_infos',
@@ -111,34 +137,11 @@ class shipment_info(models.Model):
     number = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                  help_text='出库数量'
                                  )
-    operator = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,
-                                 db_index=True,
+    operator = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,null=True,
                                  related_name="shipment_info",
                                  related_query_name='shipment_infos',
                                  help_text='操作员'
                                  )
-
-
-class storage_cell_product_relationship(models.Model):
-    uid = models.CharField(max_length=11,
-                           primary_key=True,
-                           validators=(validators.MinLengthValidator(11),),
-                           help_text='储位零件关系编号'
-                           )
-    storage_cell = models.ForeignKey(storage_cell_info, on_delete=models.CASCADE,
-                                     db_index=True,
-                                related_name="product_info",
-                                related_query_name='product_infos',
-                                help_text='关联储位'
-                                )
-    number = models.IntegerField(validators=(validators.MinValueValidator(0),),
-                                 help_text='存量'
-                                 )
-    time = models.DateTimeField(help_text='存储开始时间')
-
-# Create your models here.
-
-
 
 class ValueTypeChoices(models.IntegerChoices):
     UNCOUNTABLE = 0, 'UNCOUNTABLE'
@@ -225,9 +228,9 @@ class measure_plan_info(models.Model):
                                 db_index=True, related_name='measure_plans',
                                 help_text='关联产品'
                                 )
-    entry_info = models.ForeignKey(entry_info, on_delete=models.CASCADE,
+    entry_info = models.ForeignKey(storage_cell_product_relationship, on_delete=models.CASCADE,
                                 related_name='measure_plans',
-                                help_text='关联入库单'
+                                help_text='关联储位'
                                 )
     sample_size = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                       null=True,
@@ -240,7 +243,7 @@ class measure_plan_info(models.Model):
     batch_count = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                       help_text='默认批数'
                                       )
-    user = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,
+    user = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,null=True,
                                  related_name="measure_plan_info",
                                  help_text='从属者'
                                  )

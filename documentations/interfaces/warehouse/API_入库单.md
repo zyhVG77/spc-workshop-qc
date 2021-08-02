@@ -1,4 +1,4 @@
-## /PutInForm/submitPutInForm
+## api/warehouse/submitPutInForm
 
 描述：提交入库单
 

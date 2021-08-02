@@ -1,22 +1,121 @@
 from django.template import loader
-from warehouse.util.utils import TEMPLATENAME
+from warehouse.util.utils import TEMPLATENAME,CELLSPERPAGE
 from warehouse.util.graphCheck import getGraph, getGraphByTime
 from warehouse.util.sheduleMake import addProduct, addParameter, alterProduct, alterParameter, delProduct # , alterWorkshop, addWorkshop, delWorkshop
 from warehouse.models import *
 from user.util.interface import verify_decorator
 
 # ////////////////////////////////////////////////////////////
-# 仓库相关
+# 仓位图
 # ////////////////////////////////////////////////////////////
 
-@verify_decorator
+@verify_decorator()
 def getStorageCells(user:user_account_info = None, **kwargs):
     warehouse_id = kwargs['warehouse_id']
     order = kwargs['order']
+    page = kwargs['page']
+    if warehouse_id == 'all':
+        if user.role_warehouse == RoleChoices.ADMIN:
+            if order==0:
+                cells = storage_cell_info.objects.order_by('warehouse__uid','uid')[page*CELLSPERPAGE-1:(page+1)*CELLSPERPAGE]
+            elif order==1: # todo: may have problem
+                cells = storage_cell_info.objects.order_by('warehouse__uid','free')[page*CELLSPERPAGE-1:(page+1)*CELLSPERPAGE]
+            elif order==2:
+                cells = storage_cell_info.objects.order_by('warehouse__uid', '-free')[page * CELLSPERPAGE - 1:(page + 1) * CELLSPERPAGE]
+            else:
+                raise Exception('unknown order')
+        else:
+            raise Exception('unauthorized operation')
+    else:
+        if user.role_warehouse == RoleChoices.ADMIN or warehouse_info.objects.get(uid=warehouse_id).users.filter(uid=user.uid).exists():
+            if order==0:
+                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by('uid')[page*CELLSPERPAGE-1:(page+1)*CELLSPERPAGE]
+            elif order==1:
+                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by('free')[page * CELLSPERPAGE - 1:(page + 1) * CELLSPERPAGE]
+            elif order==2:
+                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by('-free')[page * CELLSPERPAGE - 1:(page + 1) * CELLSPERPAGE]
+            else:
+                raise Exception('unknown order')
+        else:
+            raise Exception('unauthorized operation')
+    storage_cells = []
+    for cell in cells:
+        storage_cell = {
+            'id':cell.uid,
+            'warehouse_id':cell.warehouse.uid,
+            'capacity':cell.capacity,
+            'occupy':cell.occupy
+        }
+        storage_cells.append(storage_cell)
+    response = {
+        'status':'success',
+        'storage_cells':storage_cells
+    }
+    return response
+
+@verify_decorator()
+def getWarehouseInfo(user:user_account_info = None, **kwargs):
+    if user.role_warehouse == RoleChoices.ADMIN:
+        warehouses = [{'id':warehouse.id,'name':warehouse.name} for warehouse in warehouse_info.objects.all()]
+    else:
+        warehouses = [{'id':warehouse.id,'name':warehouse.name} for warehouse in user.warehouses]
+    response = {
+        'status':'success',
+        'warehouses':warehouses
+    }
+    return response
+
+@verify_decorator()
+def getNumberOfStorageCells(user:user_account_info = None, **kwargs):
     warehouse_id = kwargs['warehouse_id']
     if warehouse_id == 'all':
         if user.role_warehouse == RoleChoices.ADMIN:
-            pass
+            number = storage_cell_info.objects.all().count()
+        else:
+            raise Exception('unauthorized operation')
+    else:
+        if user.role_warehouse == RoleChoices.ADMIN or warehouse_info.objects.get(uid=warehouse_id).users.filter(uid=user.uid).exists():
+            number = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).count()
+        else:
+            raise Exception('unauthorized operation')
+    response = {
+        'status': 'success',
+        'number': number
+    }
+    return response
+
+@verify_decorator()
+def getStorageCellDetail(user:user_account_info = None, **kwargs):
+    cell_id = kwargs['id']
+    if not user.role_warehouse == RoleChoices.ADMIN and not user.warehouses.filter(uid=storage_cell_info.objects.get(uid=cell_id).warehouse.uid):
+        raise Exception('unauthorized operation')
+    cell = storage_cell_info.objects.get(uid=cell_id)
+    products = []
+    for p in cell.products_related:
+        product = {
+            'id':p.product.id,
+            'name':p.product.name,
+            'quantity':p.number,
+            'start_time':p.time
+        }
+        products.append(product)
+    detail = {
+        'id':cell_id,
+        'warehouse_id':cell.warehouse.uid,
+        'capacity':cell.capacity,
+        'occupy':cell.occupy,
+        'products':products
+    }
+    response = {
+        'status':'success',
+        'detail':detail
+    }
+    return response
+
+# ////////////////////////////////////////////////////////////
+# 入库单
+# ////////////////////////////////////////////////////////////
+
 
 
 # ////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 
 ### 1 Get Storage Cells
 
-**请求地址**：/api/warehouse/GetStorageCells
+**请求地址**：/api/warehouse/GetStorageCells 
 
 **说明**：获取储位信息
 
@@ -47,7 +47,7 @@
 
 ### 2 Get Warehouse Info
 
-**请求地址**：/api/GetWarehouseInfo
+**请求地址**：/api/warehouse/GetWarehouseInfo
 
 **说明**：获取所有的仓库信息
 
@@ -111,7 +111,7 @@
 
 ### 4  Get Storage Cell Detail
 
-**请求地址**：/api/GetStorageCellDetail
+**请求地址**：/api/warehouse/GetStorageCellDetail
 
 **说明**：获取某一储位的信息
 
