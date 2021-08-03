@@ -303,3 +303,64 @@ def getDetailReport(user: user_account_info = None, id=None, **kwargs):
         'status': 'success',
         'content': loader.render_to_string(TEMPLATENAME, graph.generateReportDict())
     }
+
+# ////////////////////////////////////////////////////////////
+# 控制图异常报告相关
+# ////////////////////////////////////////////////////////////
+
+@verify_decorator()
+def getRelationshipForm(user:user_account_info, userid=None, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    targetUser = user_account_info.objects.get(uid=userid)
+    return {
+        'status':'success',
+        'relationshipform':[
+            {
+                'workshopid':workshop.measure_plan.uid,
+                'name':workshop.name
+            } for workshop in targetUser.workshops.all()
+        ]
+    }
+
+@verify_decorator()
+def getUserId(user:user_account_info, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    return {
+        'status':'success',
+        'userid':[
+            {
+                'id':user.uid,
+                'name':user.name,
+                'checkrole':user.get_role_display()
+            } for user in user_account_info.objects.all()
+        ]
+    }
+
+@verify_decorator()
+def getAllWorkshopsId(user:user_account_info, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    return {
+        'status':'success',
+        'workshopid':[
+            {
+                'id':workshop.measure_plan.uid,
+                'name':workshop.name
+            } for workshop in workshop_info.objects.all()
+        ]
+    }
+
+@verify_decorator()
+def submitRelationship(user:user_account_info, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    myform = kwargs['myform']
+    targetUser = user_account_info.objects.get(uid=myform['userid'])
+    for relation in myform['relations']:
+        if relation['checked']:
+            user.workshops.add(relation['workshopId'])
+        else:
+            user.workshops.remove(relation['workshopId'])
+    return {'status':'success'}
