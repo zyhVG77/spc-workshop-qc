@@ -1,0 +1,8 @@
+.idea
+!.gitkeep
+venv
+/echarts/
+/templates/Report.html
+/static/
+/templates/2.html
+/garbageBin/
