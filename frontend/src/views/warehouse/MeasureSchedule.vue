@@ -29,8 +29,9 @@
                 <thead>
                 <tr>
                   <th>测量计划编号</th>
-                  <th>仓库名</th>
-                  <th>零件名</th>
+                  <th>仓库</th>
+                  <th>储位</th>
+                  <th>零件</th>
                   <th>批容量</th>
                   <th>批数</th>
                   <th>测量属性</th>
@@ -40,8 +41,9 @@
                 <tbody>
                 <tr v-for="(p, k) in measurePlans" :key="k">
                   <td>{{ p.id }}</td>
-                  <td>{{ p.warehouseName }}</td>
-                  <td>{{ p.productName }}</td>
+                  <td>{{ p.warehouse.name }}</td>
+                  <td>{{ p.storageCellId }}</td>
+                  <td>{{ p.product.name }}</td>
                   <td>{{ p.batchSize }}</td>
                   <td>{{ p.batch }}</td>
                   <td>{{ p.parameters }}</td>
@@ -70,9 +72,16 @@
               <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                   <label for="inputGroupSelect06">仓库</label>
-                  <select class="custom-select" id="inputGroupSelect06" v-model="measurePlanInfo.warehouseId">
+                  <select class="custom-select" id="inputGroupSelect06" v-model="measurePlanInfo.warehouseId" @change="loadStorageCells">
                     <option value="default">选择仓库</option>
                     <option v-for='(w, k) in warehouseAvailable' :key='k' :value="w.id">{{ w.name }}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="inputGroupSelect06">储位</label>
+                  <select class="custom-select" id="inputGroupSelect07" v-model="measurePlanInfo.storageCellId" @change="loadProduct">
+                    <option value="default">选择储位</option>
+                    <option v-for='(w, k) in storageCells' :key='k' :value="w.id">{{ w.name }}</option>
                   </select>
                 </div>
               </div>
@@ -105,15 +114,15 @@
           </div>
         </div>
       </div>
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" v-show="parameters.length > 0">
         <div class="card">
           <div class="card-header">
             <div class="card-title">测量属性列表</div>
           </div>
           <div class="card-body">
             <div class="custom-control custom-checkbox" v-for="(p, k) in parameters" :key="k">
-              <input type="checkbox" class="custom-control-input" v-model="measurePlanInfo.parameters" :value="p.id">
-              <label class="custom-control-label">{{ p.name }}</label>
+              <input type="checkbox" class="custom-control-input" v-model="measurePlanInfo.parameters" :value="p.id" :id='"checkbox_"+k'>
+              <label :for='"checkbox_"+k' class="custom-control-label">{{ p.name }}</label>
             </div>
           </div>
         </div>
@@ -153,11 +162,13 @@ export default {
       warehouseAvailable: [],
       products: [],
       parameters: [],
+      storageCells: [],
       measurePlanInfo: {
         batchSize: null,
         batch: null,
         productId: 'default',
         warehouseId: 'default',
+        storageCellId: 'default',
         parameters: [],
         description: ''
       },
@@ -175,6 +186,12 @@ export default {
   methods: {
     loadParameters: function () {
       this.parameters = this.products.find((p) => p.id === this.measurePlanInfo.productId).parameters
+    },
+    loadStorageCells: function () {
+      this.storageCells = this.warehouseAvailable.find(w => w.id === this.measurePlanInfo.productId).storageCells
+    },
+    loadProduct: function () {
+      this.products = this.storageCells.find(s => s.id === this.measurePlanInfo.storageCellId).products
     },
     submitMeasurePlan: function () {
       WarehouseApi.submitMeasurePlan(
@@ -225,13 +242,15 @@ export default {
     // Fetch all warehouse available for the user
     WarehouseApi.getWarehouseInfo(warehouses => this.warehouseAvailable = warehouses)
     // Fetch products
-    if (this.$store.getters['warehouse_products/allProducts'].length === 0) {
-      this.$store.dispatch('warehouse_products/getAllProducts')
-          .then(products => this.products = products)
-          .catch(error => console.log(error))
-    } else {
-      this.products = this.$store.getters['warehouse_products/allProducts']
-    }
+    // Needless: Products depend on storageCell
+
+    // if (this.$store.getters['warehouse_products/allProducts'].length === 0) {
+    //   this.$store.dispatch('warehouse_products/getAllProducts')
+    //       .then(products => this.products = products)
+    //       .catch(error => console.log(error))
+    // } else {
+    //   this.products = this.$store.getters['warehouse_products/allProducts']
+    // }
   }
 }
 </script>
