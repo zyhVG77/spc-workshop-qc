@@ -19,7 +19,6 @@
     productId: 'id of product', // 产品ID
     warehouseId: 'id of warehouse', // 仓库ID
     storageCellId: 'id of storage cell' // 储位ID
-    parameters: ['id00001', 'id00002', '...'], // 测量属性ID的列表
     description: 'description' // 批注
 }
 ```

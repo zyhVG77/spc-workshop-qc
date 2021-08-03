@@ -1,7 +1,8 @@
 from django.template import loader
 from warehouse.util.utils import TEMPLATENAME,CELLSPERPAGE
 from warehouse.util.graphCheck import getGraph, getGraphByTime
-from warehouse.util.sheduleMake import addProduct, addParameter, alterProduct, alterParameter, delProduct # , alterWorkshop, addWorkshop, delWorkshop
+from warehouse.util.sheduleMake import addProduct, addParameter, alterProduct, alterParameter, delProduct, \
+    _addMeasurePlan  # , alterWorkshop, addWorkshop, delWorkshop
 from warehouse.models import *
 from user.util.interface import verify_decorator
 
@@ -230,9 +231,6 @@ def alterProducts(user: user_account_info = None, product=None, modify=None, **k
     }
     return response
 
-
-
-
 # GET METHOD
 @verify_decorator()
 def deleteProduct(user: user_account_info = None, id=None, **kwargs):
@@ -247,78 +245,97 @@ def deleteProduct(user: user_account_info = None, id=None, **kwargs):
 # 车间(测量计划)相关
 # ////////////////////////////////////////////////////////////
 
-# def _getWorkshop(workshopInfo: workshop_info):
-#     return {
-#         'id': workshopInfo.measure_plan.uid,
-#         'name': workshopInfo.name,
-#         'productId': workshopInfo.measure_plan.product.uid,
-#         'batchSize': workshopInfo.measure_plan.sample_size,
-#         'windowSize': workshopInfo.measure_plan.batch_count,
-#         'description': workshopInfo.description,
-#         'worker': workshopInfo.worker.uid if workshopInfo.worker else None
-#     }
-#
-#
-# @verify_decorator()
-# def getAllWorkshopInfo(user: user_account_info, **kwargs):
-#     workshops = []
-#     if user.role == RoleChoices.ADMIN:
-#         workshopInfos = workshop_info.objects.all()
-#     else:
-#         workshopInfos = workshop_info.objects.filter(worker=user)
-#
-#     for workshopInfo in workshopInfos:
-#         workshopInfo: workshop_info
-#         workshops.append(_getWorkshop(workshopInfo))
-#     response = {
-#         'status': 'success',
-#         'workshops': workshops
-#     }
-#     return response
-#
-#
-# @verify_decorator()
-# def alterWorkshops(user: user_account_info = None, workshop=None, modify=None, **kwargs):
-#     if user.role != RoleChoices.ADMIN:
-#         raise Exception('unauthorized operation')
-#
-#     workshopId = None
-#     workshopInfo = None
-#
-#     if modify:
-#         try:
-#             workshopId = workshop.pop('id')
-#             workshopInfo = alterWorkshop(workshopId, **workshop)
-#         except Exception as e:
-#             if not workshopInfo:
-#                 workshopInfo = workshop_info.objects.get(measure_plan__uid=workshopId)
-#             response = {
-#                 'status': 'fail',
-#                 'error_message': str(e),
-#                 'workshop': _getWorkshop(workshopInfo)
-#             }
-#             return response
-#
-#     else:
-#         workshopInfo = addWorkshop(**workshop)
-#
-#     response = {
-#         'status': 'success',
-#         'workshop': _getWorkshop(workshopInfo)
-#     }
-#
-#     return response
-#
-#
-#
-# # GET METHOD
-# @verify_decorator()
-# def deleteWorkshop(user: user_account_info = None, id=None, **kwargs):
-#     if user.role != RoleChoices.ADMIN:
-#         raise Exception('unauthorized operation')
-#
-#     delWorkshop(id[0]) # args from GET is always a list
-#     return {'status': 'success'}
+def _getMeasureplan(measureplanInfo: measure_plan_info):
+    cell = measureplanInfo.relationship_info.storage_cell
+    product = measureplanInfo.relationship_info.product
+    return {
+        'id': measureplanInfo.uid,
+        'storageCellId': cell.uid,
+        'batchSize':measureplanInfo.sample_size,
+        'batch':measureplanInfo.batch_count,
+        'warehouse':{
+            'id':cell.warehouse.uid,
+            'name':cell.warehouse.name
+        },
+        'product':{
+            'id':product.uid,
+            'name':product.name
+        },
+        'parameters':[
+            {'id':par.parameter_id,'name':par.name} for par in product.parameters.all()
+        ],
+        'description': measureplanInfo.description
+    }
+
+
+@verify_decorator()
+def getMeasurePlans(user: user_account_info, **kwargs):
+    measureplans = []
+    if user.role == RoleChoices.ADMIN:
+        measurePlans = measure_plan_info.objects.all()
+    else:
+        measurePlans = measure_plan_info.objects.filter(relationship_info__storage_cell__warehouse__in=user.warehouses.all())
+
+    for measureplan in measurePlans:
+        measureplans.append(_getMeasureplan(measureplan))
+    response = {
+        'status': 'success',
+        'workshops': measureplans
+    }
+    return response
+
+
+@verify_decorator()
+def submitMeasurePlan(user: user_account_info = None, **kwargs):
+    storageCellId = kwargs['storageCellId']
+    cell = storage_cell_info.objects.get(uid=storageCellId)
+    if not user.role_warehouse == RoleChoices.ADMIN and not warehouse_info.objects.get(uid=cell.warehouse.uid).users.filter(
+            uid=user.uid).exists():
+        raise Exception('unauthorized operation')
+
+    batchSize = kwargs['batchSize']
+    batch = kwargs['batch']
+    productId = kwargs['productId']
+    description = kwargs['description']
+
+    _addMeasurePlan(productId,cell.uid,batchSize,batch,description)
+
+    return {'status':'success'}
+
+    # if modify:
+    #     try:
+    #         workshopId = workshop.pop('id')
+    #         workshopInfo = alterWorkshop(workshopId, **workshop)
+    #     except Exception as e:
+    #         if not workshopInfo:
+    #             workshopInfo = workshop_info.objects.get(measure_plan__uid=workshopId)
+    #         response = {
+    #             'status': 'fail',
+    #             'error_message': str(e),
+    #             'workshop': _getWorkshop(workshopInfo)
+    #         }
+    #         return response
+    #
+    # else:
+    #     workshopInfo = addWorkshop(**workshop)
+    #
+    # response = {
+    #     'status': 'success',
+    #     'workshop': _getWorkshop(workshopInfo)
+    # }
+    #
+    # return response
+
+# GET METHOD
+@verify_decorator()
+def deleteMeasurePlan(user: user_account_info = None, id=None, **kwargs):
+    measure_plan = measure_plan_info.objects.get(uid=id) # todo: may cause secure problems
+    if user.role != RoleChoices.ADMIN or not warehouse_info.objects.get(uid=measure_plan.relationship_info.storage_cell.warehouse.uid).users.filter(
+            uid=user.uid).exists():
+        raise Exception('unauthorized operation')
+
+    deleteMeasurePlan(id[0]) # args from GET is always a list
+    return {'status': 'success'}
 
 # ////////////////////////////////////////////////////////////
 # 控制图异常报告相关

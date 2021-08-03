@@ -83,7 +83,7 @@ class storage_cell_product_relationship(models.Model):
     number = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                  help_text='存量'
                                  )
-    time = models.DateTimeField(help_text='存储开始时间')
+    time = models.DateTimeField(help_text='更新时间')
 
 # ////////////////////////////////////////////////////////////
 # 出入库测量相关
@@ -224,13 +224,9 @@ class measure_plan_info(models.Model):
                            validators=(validators.MinLengthValidator(11),),
                            help_text='测量计划编号'
                            )
-    product = models.ForeignKey(product_info, on_delete=models.CASCADE,
-                                db_index=True, related_name='measure_plans',
-                                help_text='关联产品'
-                                )
-    entry_info = models.ForeignKey(storage_cell_product_relationship, on_delete=models.CASCADE,
-                                related_name='measure_plans',
-                                help_text='关联储位'
+    relationship_info = models.ForeignKey(storage_cell_product_relationship, on_delete=models.CASCADE,
+                                related_name='measure_plan',
+                                help_text='关联产品储位信息'
                                 )
     sample_size = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                       null=True,
@@ -243,10 +239,9 @@ class measure_plan_info(models.Model):
     batch_count = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                       help_text='默认批数'
                                       )
-    user = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,null=True,
-                                 related_name="measure_plan_info",
-                                 help_text='从属者'
-                                 )
+    description = models.CharField(max_length=256, null=True,
+                                   help_text='批注'
+                                   )
 
     def __str__(self):
         return self.uid

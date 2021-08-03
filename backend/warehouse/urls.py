@@ -38,6 +38,10 @@ warehouse_patterns = [
     path('GetNumberOfStorageCells', lambda request: myJsonResponse(getNumberOfStorageCells(request))),
     path('GetStorageCellDetail', lambda request: myJsonResponse(getStorageCells(request))),
 
+    path('SubmitMeasurePlan', lambda request: myJsonResponse(submitMeasurePlan(request))),
+    path('GetMeasurePlans', lambda request: myJsonResponse(getMeasurePlans(request))),
+    path('DeleteMeasurePlan', lambda request: myJsonResponse(deleteMeasurePlan)),
+
     path('GetAllProducts',lambda request:myJsonResponse(getProducts(request))),
     path('SubmitProduct',lambda request:myJsonResponse(alterProducts(request))),
     path('DeleteProduct',lambda request:myJsonResponse(deleteProduct(request))),
