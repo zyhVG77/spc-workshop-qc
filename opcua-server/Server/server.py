@@ -10,22 +10,19 @@ from IPython import embed
 from opcua import ua, uamethod, Server
 
 
-class SubHandler(object):
-    """
-    Subscription Handler. To receive events from server for a subscription
-    """
-    def datachange_notification(self, node, val, data):
-        print("Python: New data change event", node, val)
-
-    def event_notification(self, event):
-        print("Python: New event", event)
+def start_one_simulation():
+    # Start plc simulation
+    machines = server.get_node('ns=3;i=2002').get_children()
+    simulators = [PlcSimulator(node, str(random.randint(0, 99999999999)).rjust(8, '0')) for node in machines]
+    for simulator in simulators:
+        simulator.start()
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.WARN)
     server = Server()
-    # server.disable_clock()
-    server.set_endpoint("opc.tcp://0.0.0.0:4840/freeopcua/server/")
+    # Server.disable_clock()
+    server.set_endpoint("opc.tcp://0.0.0.0:4840/warehouse/server/")
     server.set_server_name("OPC UA Server")
     # set all possible endpoint policies for clients to connect through
     server.set_security_policy([
@@ -33,25 +30,17 @@ if __name__ == "__main__":
         ua.SecurityPolicyType.Basic256Sha256_SignAndEncrypt,
         ua.SecurityPolicyType.Basic256Sha256_Sign])
 
-    uri = "SPC Group"
+    uri = "https://github.com/zyhVG77/SpcApp.git"
     idx = server.register_namespace(uri)
 
     # import some nodes from xml
-    server.import_xml("../server.xml")
+    server.import_xml("../nodes.xml")
 
     # starting!
     server.start()
-
-    # Start plc simulation
-    machines = server.get_node('ns=3;i=2002').get_children()
-    simulators = [PlcSimulator(node, str(random.randint(0,99999999999)).rjust(8,'0')) for node in machines]
-    for simulator in simulators:
-        simulator.start()
 
     print("Available loggers are: ", logging.Logger.manager.loggerDict.keys())
     try:
         embed()
     finally:
-        for simulator in simulators:
-            simulator.stop()
         server.stop()

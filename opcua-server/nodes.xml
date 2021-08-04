@@ -4,6 +4,7 @@
     <Uri>https://github.com/zyhVG77/SpcApp</Uri>
   </NamespaceUris>
   <Aliases>
+    <Alias Alias="Int16">i=4</Alias>
     <Alias Alias="Float">i=10</Alias>
     <Alias Alias="String">i=12</Alias>
     <Alias Alias="Organizes">i=35</Alias>
@@ -37,6 +38,8 @@
       <Reference ReferenceType="HasProperty">ns=1;i=2008</Reference>
       <Reference ReferenceType="HasProperty">ns=1;i=2010</Reference>
       <Reference ReferenceType="HasComponent">ns=1;i=2003</Reference>
+      <Reference ReferenceType="HasComponent">ns=1;i=2014</Reference>
+      <Reference ReferenceType="HasComponent">ns=1;i=2015</Reference>
     </References>
   </UAObject>
   <UAVariable NodeId="ns=1;i=2007" BrowseName="1:MeasurePlanId" ParentNodeId="ns=1;i=2006" DataType="String">
@@ -138,6 +141,28 @@
     </References>
     <Value>
       <uax:Float>0.0</uax:Float>
+    </Value>
+  </UAVariable>
+  <UAVariable NodeId="ns=1;i=2014" BrowseName="1:BatchSize" ParentNodeId="ns=1;i=2006" DataType="Int16">
+    <DisplayName>BatchSize</DisplayName>
+    <Description>BatchSize</Description>
+    <References>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=2006</Reference>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+    </References>
+    <Value>
+      <uax:Int16>0</uax:Int16>
+    </Value>
+  </UAVariable>
+  <UAVariable NodeId="ns=1;i=2015" BrowseName="1:ParameterNumber" ParentNodeId="ns=1;i=2006" DataType="Int16">
+    <DisplayName>ParameterNumber</DisplayName>
+    <Description>ParameterNumber</Description>
+    <References>
+      <Reference ReferenceType="HasComponent" IsForward="false">ns=1;i=2006</Reference>
+      <Reference ReferenceType="HasTypeDefinition">i=63</Reference>
+    </References>
+    <Value>
+      <uax:Int16>0</uax:Int16>
     </Value>
   </UAVariable>
 </UANodeSet>
