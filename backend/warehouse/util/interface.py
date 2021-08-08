@@ -259,11 +259,19 @@ def _getMeasureplan(measureplanInfo: measure_plan_info):
         },
         'product':{
             'id':product.uid,
-            'name':product.name
+            'name':product.name,
+            'parameters': [
+                {
+                    'id': par.parameter_id,
+                    'name': par.name,
+                    'unit': par.unit,
+                    'scale': par.scale,
+                    'graph_type': par.control_plan.get_type_display(),
+                    'usl': par.control_plan.usl,
+                    'lsl': par.control_plan.lsl
+                } for par in product.parameters.all()
+            ],
         },
-        'parameters':[
-            {'id':par.parameter_id,'name':par.name} for par in product.parameters.all()
-        ],
         'description': measureplanInfo.description
     }
 
