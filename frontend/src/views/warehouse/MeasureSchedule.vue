@@ -114,6 +114,8 @@
           </div>
         </div>
       </div>
+      <!-- [Deleted] Pick up measure parameters  -->
+      <!--
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" v-show="parameters.length > 0">
         <div class="card">
           <div class="card-header">
@@ -127,6 +129,7 @@
           </div>
         </div>
       </div>
+      -->
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
           <div class="card-body">
@@ -161,7 +164,7 @@ export default {
     return {
       warehouseAvailable: [],
       products: [],
-      parameters: [],
+      // parameters: [],
       storageCells: [],
       measurePlanInfo: {
         batchSize: null,
@@ -169,7 +172,7 @@ export default {
         productId: 'default',
         warehouseId: 'default',
         storageCellId: 'default',
-        parameters: [],
+        // parameters: [],
         description: ''
       },
       // Hint
@@ -184,9 +187,9 @@ export default {
     }
   },
   methods: {
-    loadParameters: function () {
-      this.parameters = this.products.find((p) => p.id === this.measurePlanInfo.productId).parameters
-    },
+    // loadParameters: function () {
+    //   this.parameters = this.products.find((p) => p.id === this.measurePlanInfo.productId).parameters
+    // },
     loadStorageCells: function () {
       this.storageCells = this.warehouseAvailable.find(w => w.id === this.measurePlanInfo.productId).storageCells
     },

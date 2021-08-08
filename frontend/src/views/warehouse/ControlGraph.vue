@@ -39,7 +39,7 @@
                     <div>
                       <div class="form-group">
                         <select class="form-control form-control-sm" v-model="p.parameterSelected.id">
-                          <option v-for="(para, pk) in p.parameters" :value="para.id" :key="pk">{{ para.name }}</option>
+                          <option v-for="(para, pk) in p.product.parameters" :value="para.id" :key="pk">{{ para.name }}</option>
                         </select>
                       </div>
                     </div>
@@ -79,10 +79,10 @@
               产品名：{{ measurePlanSelected.product.name }}
               属性名：{{ measurePlanSelected.parameterSelected.id }}|
               单位：{{ measurePlanSelected.parameterSelected.unit }}|
-              小数位数：{{ measurePlanSelected.scale }}|
-              控制图类型：{{ measurePlanSelected.graph_type }}|
-              USL：{{ measurePlanSelected.usl }}|
-              LSL：{{ measurePlanSelected.lsl }}
+              小数位数：{{ measurePlanSelected.parameterSelected.scale }}|
+              控制图类型：{{ measurePlanSelected.parameterSelected.graph_type }}|
+              USL：{{ measurePlanSelected.parameterSelected.usl }}|
+              LSL：{{ measurePlanSelected.parameterSelected.lsl }}
             </p>
           </div>
         </div>
@@ -151,8 +151,8 @@ export default {
   computed: {
     requestTemplate() {
       let temp = {
-        measurePlanId: this.measurePlan.id,
-        parameterId: this.measurePlan.parameterSelected.id,
+        measurePlanId: this.measurePlanSelected.id,
+        parameterId: this.measurePlanSelected.parameterSelected.id,
         start_time: '',
         end_time: '',
         analyze: false
@@ -167,37 +167,43 @@ export default {
         id: 'M#001',
         warehouse: { id: 'W#001', name: 'Warehouse1' },
         storageCellId: 'S#001',
-        product: { id: 'P#001', name: 'Product' },
+        product: {
+          id: 'P#001',
+          name: 'Product',
+          parameters: [{
+            id: 'Pa#001',
+            name: 'Parameter1'
+          }, {
+            id: 'Pa#002',
+            name: 'Parameter2'
+          }, {
+            id: 'Pa#003',
+            name: 'Parameter3'
+          }],
+        },
         batchSize: 12,
         batch: 100,
-        parameters: [{
-          id: 'Pa#001',
-          name: 'Parameter1'
-        }, {
-          id: 'Pa#002',
-          name: 'Parameter2'
-        }, {
-          id: 'Pa#003',
-          name: 'Parameter3'
-        }],
         parameterSelected: { id: 'Pa#001' }
       }, {
         id: 'M#001',
         warehouse: { id: 'W#001', name: 'Warehouse1' },
         storageCellId: 'S#001',
-        product: { id: 'P#001', name: 'Product' },
+        product: {
+          id: 'P#001',
+          name: 'Product',
+          parameters: [{
+            id: 'Pa#001',
+            name: 'Parameter1'
+          }, {
+            id: 'Pa#002',
+            name: 'Parameter2'
+          }, {
+            id: 'Pa#003',
+            name: 'Parameter3'
+          }]
+        },
         batchSize: 12,
         batch: 100,
-        parameters: [{
-          id: 'Pa#001',
-          name: 'Parameter1'
-        }, {
-          id: 'Pa#002',
-          name: 'Parameter2'
-        }, {
-          id: 'Pa#003',
-          name: 'Parameter3'
-        }],
         parameterSelected: { id: 'Pa#001' }
       }],
       measurePlanSelected: {},
@@ -211,8 +217,9 @@ export default {
   },
   methods: {
     getControlGraphByDefault(k) {
-      this.measurePlan = this.measurePlans[k]
-      this.measurePlan.parameterSelected = this.measurePlan.parameters.find(p => p.id = this.measurePlan.parameterSelected.id)
+      this.measurePlanSelected = this.measurePlans[k]
+      this.measurePlanSelected.parameterSelected =
+          this.measurePlanSelected.product.parameters.find(p => p.id = this.measurePlanSelected.parameterSelected.id)
 
       let req = this.requestTemplate
       req.analyze = false
@@ -273,15 +280,7 @@ export default {
     },
     back() {
       this.current = 0
-      this.measurePlan = {
-          measurePlanId: '',
-          storageCellId: '',
-          productId: '',
-          productName: '',
-          batchSize: '',
-          batch: '',
-          parameterId: ''
-      }
+      this.measurePlanSelected = {}
       this.timeRange = null
     }
   },
@@ -295,7 +294,7 @@ export default {
     )
     // Add extra info
     this.measurePlans.forEach(item => {
-      item['parameterSelected'] = item.parameters[0]
+      item['parameterSelected'] = item.product.parameters[0]
     })
     // Initialize e-charts
     const chartDom = document.getElementById('main');
