@@ -46,7 +46,6 @@ workshop_patterns = [
     path('DeleteWorkshop',lambda request:myJsonResponse(deleteWorkshop(request))),
 
     path('getRelationshipForm',lambda request:myJsonResponse(getRelationshipForm(request))),
-    path('getUserId',lambda request:myJsonResponse(getUserId(request))),
     path('getAllWorkshopsId',lambda request:myJsonResponse(getAllWorkshopsId(request))),
     path('submitRelationship',lambda request:myJsonResponse(submitRelationship(request)))
 ]

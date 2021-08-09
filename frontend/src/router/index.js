@@ -78,7 +78,7 @@ export const asyncRouterMap = [
         path: 'UserManage',
         component: () => import('@/views/workshop/UserManage'),
         meta: {
-          role: ['admin', 'super_editor', 'viewer'],
+          role: ['admin', 'super_editor',],
           isSidebarItem: true,
           subsystem: 'workshop',
           sidebarInfo: {

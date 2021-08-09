@@ -11,7 +11,8 @@ user_patterns = [
     path('ConfirmLogin',lambda request:myJsonResponse(confirmLogin(request))),
     path('GetUserInfo',lambda request:myJsonResponse(getUserInfo(request))),
     path('ModifyPassword',lambda request:myJsonResponse(modifyPassword(request))),
-    path('UpdateUserInfo',lambda request:myJsonResponse(updateUserInfo(request)))
+    path('UpdateUserInfo',lambda request:myJsonResponse(updateUserInfo(request))),
+    path('getUserId', lambda request: myJsonResponse(getUserId(request)))
 ]
 
 urlpatterns = [

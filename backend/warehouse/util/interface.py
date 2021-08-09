@@ -123,7 +123,7 @@ def getStorageCellDetail(user:user_account_info = None, **kwargs):
 # 零件相关
 # ////////////////////////////////////////////////////////////
 
-def _getProduct(productInfo: product_info, user=None):
+def _getProduct(productInfo: product_info = None, user=None):
     parameters = []
     for parameterInfo in productInfo.parameters.order_by('parameter_id'):
         parameter = {
@@ -277,7 +277,7 @@ def _getMeasureplan(measureplanInfo: measure_plan_info):
 
 
 @verify_decorator()
-def getMeasurePlans(user: user_account_info, **kwargs):
+def getMeasurePlans(user: user_account_info = None, **kwargs):
     measureplans = []
     if user.role == RoleChoices.ADMIN:
         measurePlans = measure_plan_info.objects.all()

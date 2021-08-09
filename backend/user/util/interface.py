@@ -1,6 +1,6 @@
 from base64 import b64encode, b64decode
 from functools import wraps
-from user.util.utils import TOKENTIMEOUT,DEBUG
+from user.util.utils import TOKENTIMEOUT, DEBUG, user_uid
 from user.models import *
 import random
 import time
@@ -19,7 +19,6 @@ class userStatus():
         self.user = user
         self.token = token
         self.timeout = timeout
-
 
 def verify_decorator(verify: bool = True):
     def new_decorator(func):
@@ -49,7 +48,6 @@ def verify_decorator(verify: bool = True):
 
     return new_decorator
 
-
 def _getToken(user: user_account_info, withoutTimeout=True):
     token = b64encode(":".join([str(user.uid),
                                 str(user.name),
@@ -62,7 +60,6 @@ def _getToken(user: user_account_info, withoutTimeout=True):
         print('Token:' + token)
 
     return token
-
 
 def _verifyToken(token):
     tmpTime = time.time()
@@ -132,6 +129,13 @@ def getUserInfo(user: user_account_info = None, **kwargs):
     }
     return response
 
+# default password: 123456
+def _addUser(name,password='$2a$10$mp0OfeLbviY2cePyMX.S1uwvzvBI4pdu5zYVQ/t/iaEQwrOEv/byO',role=RoleChoices.VIEWER,role_warehouse=RoleChoices.VIEWER,fullname=None,email=None,phone=None,work_id=None,avatar=None):
+    user = user_account_info(next(user_uid),name,password,role,role_warehouse)
+    user.save()
+    user_inf = user_info(user.uid,fullname,email,phone,work_id,avatar)
+    user_inf.save()
+    return user
 
 @verify_decorator()
 def updateUserInfo(user: user_account_info = None, **kwargs):
@@ -182,10 +186,26 @@ def updateUserInfo(user: user_account_info = None, **kwargs):
         return response
 
 @verify_decorator()
-def modifyPassword(user:user_account_info,rawPwdHash=None,newPwdHash=None,**kwargs):
+def modifyPassword(user:user_account_info=None,rawPwdHash=None,newPwdHash=None,**kwargs):
     if not bcrypt.checkpw(rawPwdHash.encode(),user.password_hash.encode()):
         raise Exception("incorrect password")
     # todo: 理论上这个加盐哈希应当完全由后端来做
     user.password_hash = newPwdHash
     user.save()
     return {'status':'success'}
+
+@verify_decorator()
+def getUserId(user:user_account_info=None, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    return {
+        'status':'success',
+        'userid':[
+            {
+                'id':user.uid,
+                'name':user.name,
+                'checkrole':user.get_role_display(),
+                'warehouserole':user.get_role_warehouse_display()
+            } for user in user_account_info.objects.all()
+        ]
+    }

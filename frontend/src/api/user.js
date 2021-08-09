@@ -66,17 +66,6 @@ const UserApi = {
                 error('请求失败！')
             })
     },
-    //Submit the information of the user
-    submitRelatonship: function (data) {
-        axios.post('/api/user/submitRelatonship',data)
-            .then(resp => {
-                if (resp.data.status === 'success')
-                    console.log(resp);
-            })
-            .catch(err => {
-                console.log(err.data.errorMsg);
-            })
-    }
 }
 
 export default UserApi

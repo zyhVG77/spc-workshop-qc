@@ -9,19 +9,21 @@
           <div class="card">
               <div class="card-header">
                   <div class="card-title">
-                      <a href="javascript:void(0);" @click = "changeMordifychoose()">选择用户</a> |
-                      <a href="javascript:void(0);" @click = "changeMordify()">添加用户</a>
+                      <div class="card-title">选择用户</div>
+                      <!--todo:添加用户的具体逻辑是什么，添加的是用户名还是用户id，新用户如何选择车间-->
+<!--                      <a href="javascript:void(0);" @click = "changeMordifychoose()">选择用户</a> |-->
+<!--                      <a href="javascript:void(0);" @click = "changeMordify()">添加用户</a>-->
                   </div>
               </div>
               <div class="card-body">
                   <div class="row gutters">
                       <div class="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
-                          <div class="form-group" v-show="myform.mordify">
+                          <div class="form-group" v-show="myform.modify">
                              <select class="custom-select" value="default" v-model="myform.userid" @click="findRole()">
-                                 <option v-for="(item,k) in useridform" :key="k" >{{item.id}}</option>    	<!--getUserId()  -->
+                                 <option v-for="(item,k) in useridform" :key="k" :value="item.id">{{item.name}}</option>    	<!--fixme: 显示用户名较为合理，同时设置:value为用户id-->
                              </select>
                           </div>
-                          <div class="form-group" v-show="!myform.mordify">
+                          <div class="form-group" v-show="!myform.modify">
                              <input  class="form-control" type="text" v-model="myform.userid">
                           </div>
                       </div>
@@ -41,7 +43,7 @@
                              <select class="custom-select" v-model="myform.checkrole" >
                                  <option value="admin">用户管理员</option>
                                  <option value="super_editor">厂长</option>
-                                 <option value="viewer" onclick="getRelations()">普通员工</option>
+                                 <option value="viewer">普通员工</option> <!--fixme: 这里使用click是不会触发的 -->
                              </select>
                           </div>
                       </div>
@@ -85,7 +87,7 @@ export default {
           myform:{
               checkrole:"",
               userid:"",
-              mordify:true,
+              modify:true, // fixme: mordify -> modify
               relations: [
                   // {
                   //     workshopId: "车间一",
@@ -104,8 +106,8 @@ export default {
       }
 },
   methods:{
-      changeMordifychoose:function(){this.myform.mordify = !this.myform.mordify;this.myform.userid = ""},
-      changeMordify:function(){this.myform.mordify = !this.myform.mordify;this.myform.userid = ""},
+      changeMordifychoose:function(){this.myform.modify = !this.myform.modify;this.myform.userid = ""},
+      changeMordify:function(){this.myform.modify = !this.myform.modify;this.myform.userid = ""},
       selectChange:function(val){
         this.userid = val
         if (this.userid in this.getUserId()){
@@ -120,10 +122,8 @@ export default {
             if(this.useridform[i]["id"] === this.myform.userid){
                 this.myform.checkrole = this.useridform[i]["checkrole"]
             }
-            else{
-                continue
-            }
         }
+        if(this.myform.checkrole === 'viewer') this.getRelations() // fixme: 判断是否是viewer，更新relations信息
       },
       getUserId:function(){
           UserApi.getUserId(
@@ -148,26 +148,28 @@ export default {
             )
       },
       getRelations:function (){
+          this.myform.relations = [] //fixme: 将列表初始化为空
           for (var i = 0; i < this.workshopform.length;i++){
-              this.relations.push({})
-              this.relations[i]["workshopId"] = this.workshopform[i]["id"]
+              this.myform.relations.push({}) //fixme: this.relations -> this.myform.relations
+              this.myform.relations[i]["workshopId"] = this.workshopform[i]["id"]
               for (var j = 0; j < this.relationshipform.length;j++) {
-                  this.relations[i]["checked"] = false
+                  this.myform.relations[i]["checked"] = false
                   if (this.relationshipform[j]['workshopid'] === this.workshopform[i]["id"]) {
-                      this.relations[i]["checked"] = true
+                      this.myform.relations[i]["checked"] = true
                       break
-                  }
-                  else {
-                    continue
                   }
               }
           }
       },
+      // todo: 有时候未选中的workshop中没有‘checked’键，会导致提交失败
       submitRelatonship:function () {
-          UserApi.submitRelatonship(this.myform)
+          WorkshopApi.submitRelatonship(this.myform) // fixme: 我把这个API移到了workshop中
       }
-
-  }
+    },
+    mounted() { // fixme: 挂载组件之后应当调用GetUserId，否则useridform是空的，无法选择用户；workshop同理
+        this.getUserId()
+        this.getAllWorkshopsId()
+    }
 }
 </script>
 
