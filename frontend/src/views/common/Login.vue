@@ -61,7 +61,7 @@ export default {
         bcrypt.hash(_this.password, salt, function(err, hash) {
           // console.log(hash);
           let username = _this.username
-          let password = hash
+          let password = _this.password //hash
           console.log(hash)
           let rememberMe = _this.rememberMe
           _this.$store.dispatch('user/login', { username, password, rememberMe})

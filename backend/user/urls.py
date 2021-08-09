@@ -10,7 +10,7 @@ class myJsonResponse(JsonResponse):
 user_patterns = [
     path('ConfirmLogin',lambda request:myJsonResponse(confirmLogin(request))),
     path('GetUserInfo',lambda request:myJsonResponse(getUserInfo(request))),
-    path('ModifyPassword',lambda x:None),
+    path('ModifyPassword',lambda request:myJsonResponse(modifyPassword(request))),
     path('UpdateUserInfo',lambda request:myJsonResponse(updateUserInfo(request)))
 ]
 
