@@ -119,6 +119,28 @@ const WorkshopApi = {
             })
             .catch(() => error('请求失败！'))
     },
+    //Get the id of the workshop that bond with the user
+    getRelationshipForm: function (userid,success,fail,error) {
+        axios.get('/api/workshop/getRelationshipForm?userid='+userid)
+            .then(resp => {
+                if (resp.data.status === 'success')
+                    success(resp.data.relationshipform)
+                else
+                    fail(resp.data.errorMsg)
+            })
+            .catch(() => error('请求失败'))
+    },
+    //Get all existed workshops
+    getAllWorkshopsId:function(success,fail,error){
+        axios.get('/api/workshop/getAllWorkshopsId')
+            .then(resp => {
+                if (resp.data.status === 'success')
+                    success(resp.data.workshopid)
+                else
+                    fail(resp.data.errorMsg)
+            })
+            .catch(() => error('请求失败'))
+    }
 }
 
 export default WorkshopApi
