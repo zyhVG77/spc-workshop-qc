@@ -93,12 +93,12 @@ except:
     if DEBUG:
         print('Initiallize idIterators failed')
 
-warehouse_uid = int(warehouse_uid if warehouse_uid else -1) + 1
-storage_cell_uid = int(storage_cell_uid if storage_cell_uid else -1) + 1
+warehouse_uid = int(warehouse_uid.uid if warehouse_uid else -1) + 1
+storage_cell_uid = int(storage_cell_uid.uid if storage_cell_uid else -1) + 1
 product_uid = int(product_uid.uid if product_uid else -1) + 1
-storage_cell_product_relationship_uid = int(storage_cell_product_relationship_uid if storage_cell_product_relationship_uid else -1) + 1
-entry_uid = int(entry_uid if entry_uid else -1) + 1
-shipment_uid = int(shipment_uid if shipment_uid else -1) + 1
+storage_cell_product_relationship_uid = int(storage_cell_product_relationship_uid.uid if storage_cell_product_relationship_uid else -1) + 1
+entry_uid = int(entry_uid.uid if entry_uid else -1) + 1
+shipment_uid = int(shipment_uid.uid if shipment_uid else -1) + 1
 par_uid = int(par_uid.uid if par_uid else -1) + 1
 control_plan_uid = int(control_plan_uid.uid if control_plan_uid else -1) + 1
 measure_plan_uid = int(measure_plan_uid.uid if measure_plan_uid else -1) + 1

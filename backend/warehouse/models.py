@@ -2,12 +2,6 @@ from django.db import models
 from django.db.models.fields import validators
 from django.contrib.auth.models import AbstractUser
 from user.models import *
-# ////////////////////////////////////////////////////////////
-# 仓储相关
-# ////////////////////////////////////////////////////////////
-
-class main_board(models.Model):
-    pass
 
 # ////////////////////////////////////////////////////////////
 # 仓储相关
@@ -23,6 +17,47 @@ class warehouse_info(models.Model):
                             help_text='仓库名称'
                             )
     users = models.ManyToManyField(user_account_info,related_name='warehouses')
+    capacity = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                   help_text='容量'
+                                   )
+    occupy = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                 help_text='占用'
+                                 )
+    @property
+    def free(self):
+        return self.capacity-self.occupy
+
+# 看板
+class main_board(models.Model):
+    uid = models.AutoField(primary_key=True)
+    date = models.DateField(db_index=True,
+                            help_text='统计日期'
+                            )
+    warehouse = models.ForeignKey(warehouse_info, on_delete=models.CASCADE,
+                                  related_name="boards",
+                                  help_text='关联仓库'
+                                  )
+    store_batches = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                       help_text='入库批数',
+                                       )
+    store_amount = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                       help_text='入库数量',
+                                       )
+    store_money = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                       help_text='入库金额',
+                                       )
+    deliver_batches = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                       help_text='出库批数',
+                                       )
+    deliver_amount = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                       help_text='出库数量',
+                                       )
+    deliver_money = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                       help_text='出库金额',
+                                       )
+    occupation = models.FloatField(validators=(validators.MinValueValidator(0),),
+                                       help_text='仓库占用情况',
+                                       )
 
 
 class storage_cell_info(models.Model):
@@ -43,12 +78,9 @@ class storage_cell_info(models.Model):
     occupy = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                  help_text='占用'
                                  )
+    @property
     def free(self):
-        if self.capacity == 0:
-            return 0
-        else:
-            return self.occupy/self.capacity
-    free.admin_order_field = 'free'
+        return self.capacity-self.occupy
 
 class product_info(models.Model):
     uid = models.CharField(max_length=11,
@@ -85,7 +117,7 @@ class storage_cell_product_relationship(models.Model):
                                 related_name='cells_related',
                                 help_text='关联零件'
                                 )
-    number = models.IntegerField(validators=(validators.MinValueValidator(0),),
+    occupy = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                  help_text='存量'
                                  )
     time = models.DateTimeField(help_text='更新时间')
@@ -101,24 +133,28 @@ class entry_info(models.Model):
                            help_text='入库单编号'
                            )
     entry_time = models.DateTimeField(help_text='入库时间')
-    product = models.ForeignKey(product_info, on_delete=models.CASCADE,
-                                related_name="entry_info",
-                                related_query_name='entry_infos',
-                                help_text='零件'
-                                )
-    cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,null=True,
-                             db_index=True,
-                             related_name="entry_info",
-                             related_query_name='entry_infos',
-                             help_text='从属储位',
-                             )
-    number = models.IntegerField(validators=(validators.MinValueValidator(0),),
-                                 help_text='入库数量'
-                                 )
+    # cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,null=True,
+    #                          db_index=True,
+    #                          related_name="entry_info",
+    #                          related_query_name='entry_infos',
+    #                          help_text='从属储位',
+    #                          )
     operator = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,null=True,
                                  related_name="entry_info",
                                  related_query_name='entry_infos',
                                  help_text='操作员'
+                                 )
+
+class entry_product_relationship(models.Model):
+    uid = models.AutoField(primary_key=True)
+    product = models.ForeignKey(product_info, on_delete=models.CASCADE,
+                                help_text='零件'
+                                )
+    entry = models.ForeignKey(entry_info, on_delete=models.CASCADE,
+                              related_name="products",
+                              help_text='关联入库单')
+    number = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                 help_text='入库数量'
                                  )
 
 class shipment_info(models.Model):
@@ -128,24 +164,28 @@ class shipment_info(models.Model):
                            help_text='出库单编号'
                            )
     shipping_time = models.DateTimeField(help_text='出库时间')
-    product = models.ForeignKey(product_info, on_delete=models.CASCADE,
-                                related_name="shipment_info",
-                                related_query_name='shipment_infos',
-                                help_text='零件'
-                                )
-    cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,null=True,
-                             db_index=True,
-                             related_name="shipment_info",
-                             related_query_name='shipment_infos',
-                             help_text='从属储位'
-                             )
-    number = models.IntegerField(validators=(validators.MinValueValidator(0),),
-                                 help_text='出库数量'
-                                 )
+    # cell = models.ForeignKey(storage_cell_info, on_delete=models.SET_NULL,null=True,
+    #                          db_index=True,
+    #                          related_name="shipment_info",
+    #                          related_query_name='shipment_infos',
+    #                          help_text='从属储位'
+    #                          )
     operator = models.ForeignKey(user_account_info, on_delete=models.SET_NULL,null=True,
                                  related_name="shipment_info",
                                  related_query_name='shipment_infos',
                                  help_text='操作员'
+                                 )
+
+class shipment_product_relationship(models.Model):
+    uid = models.AutoField(primary_key=True)
+    product = models.ForeignKey(product_info, on_delete=models.CASCADE,
+                                help_text='零件'
+                                )
+    entry = models.ForeignKey(shipment_info, on_delete=models.CASCADE,
+                              related_name="products",
+                              help_text='关联出库单')
+    number = models.IntegerField(validators=(validators.MinValueValidator(0),),
+                                 help_text='出库数量'
                                  )
 
 class ValueTypeChoices(models.IntegerChoices):

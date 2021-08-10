@@ -9,28 +9,29 @@ const WarehouseApi = {
             }
         })
             .then(resp => {
-                success(resp.data)
+                console.log(resp.data.storage_cells)
+                success(resp.data.storage_cells)
             })
             .catch(e => console.log(e))
     },
     getWarehouseInfo: function (success) {
         axios.get('/api/warehouse/GetWarehouseInfo')
             .then(resp => {
-                success(resp.data)
+                success(resp.data.warehouses)
             })
             .catch(e => console.log(e))
     },
     getNumberOfStorageCells: function (warehouse_id, success) {
-        axios.get('/api/warehouse/GetNumberOfStorageCells?warehouse_id?'+warehouse_id)
+        axios.get('/api/warehouse/GetNumberOfStorageCells?warehouse_id='+warehouse_id)
             .then(resp => {
-                success(resp.data)
+                success(resp.data.number)
             })
             .catch(e => console.log(e))
     },
     getStorageCellDetail: function (cell_id, success) {
         axios.get('/api/warehouse/GetStorageCellDetail?id=' + cell_id)
             .then(resp => {
-                success(resp.data)
+                success(resp.data.detail)
             })
             .catch(e => console.log(e))
     },
@@ -43,9 +44,9 @@ const WarehouseApi = {
             .catch(e => console.log(e))
     },
     getWarehouseAffairs: function (success) {
-        axios.get('api/warehouse/GetWarehouseAffairs')
+        axios.get('/api/warehouse/GetWarehouseAffairs')
             .then(resp => {
-                success(resp.data)
+                success(resp.data.affairs)
             })
             .catch(e => console.log(e))
     },

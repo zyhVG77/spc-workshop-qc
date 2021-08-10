@@ -17,7 +17,7 @@ const UserApi = {
     },
     // Get User Info
     getUserInfo: function(success, fail, error) {
-        axios.get('api/user/GetUserInfo')
+        axios.get('/api/user/GetUserInfo')
             .then(resp => {
                 const status = resp.data.status
                 if (status === 'success')

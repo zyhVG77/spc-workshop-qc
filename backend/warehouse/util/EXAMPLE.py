@@ -53,4 +53,3 @@ def AutoUpload():
         for m in measurePlans:
             uploadData(m.generateForm())
         time.sleep(INTERVAL)
-

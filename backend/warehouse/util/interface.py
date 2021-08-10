@@ -1,40 +1,56 @@
+from django.db.models import F
 from django.template import loader
-from warehouse.util.utils import TEMPLATENAME,CELLSPERPAGE
+from warehouse.util.utils import TEMPLATENAME, CELLSPERPAGE, entry_uid, storage_cell_product_relationship_uid, \
+    warehouse_uid, storage_cell_uid
 from warehouse.util.graphCheck import getGraph, getGraphByTime
 from warehouse.util.sheduleMake import addProduct, addParameter, alterProduct, alterParameter, delProduct, \
     _addMeasurePlan  # , alterWorkshop, addWorkshop, delWorkshop
 from warehouse.models import *
 from user.util.interface import verify_decorator
+from datetime import datetime, date, timedelta
+
+
+# warehouse = warehouse_info(next(warehouse_uid),'仓库一',capacity=6000,occupy=0)
+# warehouse.save()
+# for i in range(300):
+#     cell = storage_cell_info(next(storage_cell_uid),warehouse.uid,20,0)
+#     cell.save()
+# warehouse = warehouse_info(next(warehouse_uid),'仓库二',capacity=6000,occupy=0)
+# warehouse.save()
+# for i in range(300):
+#     cell = storage_cell_info(next(storage_cell_uid),warehouse.uid,20,0)
+#     cell.save()
 
 # ////////////////////////////////////////////////////////////
 # 仓位图
 # ////////////////////////////////////////////////////////////
 
+# GET METHOD
 @verify_decorator()
 def getStorageCells(user:user_account_info = None, **kwargs):
-    warehouse_id = kwargs['warehouse_id']
-    order = kwargs['order']
-    page = kwargs['page']
+    warehouse_id = kwargs['warehouse_id'][0]
+    order = kwargs['order'][0]
+    page = int(kwargs['page'][0])
     if warehouse_id == 'all':
         if user.role_warehouse == RoleChoices.ADMIN:
-            if order==0:
-                cells = storage_cell_info.objects.order_by('warehouse__uid','uid')[page*CELLSPERPAGE-1:(page+1)*CELLSPERPAGE]
-            elif order==1: # todo: may have problem
-                cells = storage_cell_info.objects.order_by('warehouse__uid','free')[page*CELLSPERPAGE-1:(page+1)*CELLSPERPAGE]
-            elif order==2:
-                cells = storage_cell_info.objects.order_by('warehouse__uid', '-free')[page * CELLSPERPAGE - 1:(page + 1) * CELLSPERPAGE]
+            if order=='0':
+                cells = storage_cell_info.objects.order_by('warehouse__uid','uid')[page*CELLSPERPAGE:(page+1)*CELLSPERPAGE]
+            elif order=='1': # todo: may have problem
+                cells = storage_cell_info.objects.order_by('warehouse__uid',(F('capacity')/F('occupy')).asc())[page*CELLSPERPAGE:(page+1)*CELLSPERPAGE]
+            elif order=='2':
+                cells = storage_cell_info.objects.order_by('warehouse__uid', (F('capacity')/F('occupy')).desc())[page * CELLSPERPAGE:(page + 1) * CELLSPERPAGE]
             else:
                 raise Exception('unknown order')
         else:
             raise Exception('unauthorized operation')
     else:
         if user.role_warehouse == RoleChoices.ADMIN or warehouse_info.objects.get(uid=warehouse_id).users.filter(uid=user.uid).exists():
-            if order==0:
-                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by('uid')[page*CELLSPERPAGE-1:(page+1)*CELLSPERPAGE]
-            elif order==1:
-                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by('free')[page * CELLSPERPAGE - 1:(page + 1) * CELLSPERPAGE]
-            elif order==2:
-                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by('-free')[page * CELLSPERPAGE - 1:(page + 1) * CELLSPERPAGE]
+            if order=='0':
+                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by('uid')[page*CELLSPERPAGE:(page+1)*CELLSPERPAGE]
+            elif order=='1':
+                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by((F('capacity')/F('occupy')).asc())[page * CELLSPERPAGE:(page + 1) * CELLSPERPAGE]
+            elif order=='2':
+                cells = storage_cell_info.objects.filter(warehouse__uid=warehouse_id).order_by((F('capacity')/F('occupy')).desc())[page * CELLSPERPAGE:(page + 1) * CELLSPERPAGE]
             else:
                 raise Exception('unknown order')
         else:
@@ -54,21 +70,23 @@ def getStorageCells(user:user_account_info = None, **kwargs):
     }
     return response
 
+# GET METHOD
 @verify_decorator()
 def getWarehouseInfo(user:user_account_info = None, **kwargs):
     if user.role_warehouse == RoleChoices.ADMIN:
-        warehouses = [{'id':warehouse.id,'name':warehouse.name} for warehouse in warehouse_info.objects.all()]
+        warehouses = [{'id':warehouse.uid,'name':warehouse.name} for warehouse in warehouse_info.objects.all()]
     else:
-        warehouses = [{'id':warehouse.id,'name':warehouse.name} for warehouse in user.warehouses]
+        warehouses = [{'id':warehouse.uid,'name':warehouse.name} for warehouse in user.warehouses.all()]
     response = {
         'status':'success',
         'warehouses':warehouses
     }
     return response
 
+# GET METHOD
 @verify_decorator()
 def getNumberOfStorageCells(user:user_account_info = None, **kwargs):
-    warehouse_id = kwargs['warehouse_id']
+    warehouse_id = kwargs['warehouse_id'][0]
     if warehouse_id == 'all':
         if user.role_warehouse == RoleChoices.ADMIN:
             number = storage_cell_info.objects.all().count()
@@ -85,14 +103,15 @@ def getNumberOfStorageCells(user:user_account_info = None, **kwargs):
     }
     return response
 
+# GET METHOD
 @verify_decorator()
 def getStorageCellDetail(user:user_account_info = None, **kwargs):
-    cell_id = kwargs['id']
+    cell_id = kwargs['id'][0]
     if not user.role_warehouse == RoleChoices.ADMIN and not user.warehouses.filter(uid=storage_cell_info.objects.get(uid=cell_id).warehouse.uid):
         raise Exception('unauthorized operation')
     cell = storage_cell_info.objects.get(uid=cell_id)
     products = []
-    for p in cell.products_related:
+    for p in cell.products_related.all():
         product = {
             'id':p.product.id,
             'name':p.product.name,
@@ -114,10 +133,234 @@ def getStorageCellDetail(user:user_account_info = None, **kwargs):
     return response
 
 # ////////////////////////////////////////////////////////////
-# 入库单
+# 出入库
 # ////////////////////////////////////////////////////////////
 
+def _storeIntoCell(parameter,cell:storage_cell_info):
+    capacity = cell.free
+    if capacity <= 0:
+        return parameter,None
+    try:
+        relationship = cell.products_related.get(product__uid=parameter['index'])
+    except:
+        relationship = storage_cell_info(next(storage_cell_product_relationship_uid), cell.uid, parameter['index'], 0,
+                                         datetime.now())
+    warehouse = cell.warehouse
+    try:
+        board = main_board.objects.get(date=datetime.today(),warehouse=warehouse)
+    except:
+        board = main_board(date=datetime.today(), warehouse=warehouse.uid)
+        try:
+            board.occupation = main_board.objects.filter(warehouse=warehouse).order_by('-date')[0].occupation
+        except: # todo: check if it works
+            board.occupation = 0
+        board.save()
+    if parameter['quantity']>capacity:
+        shift = cell.free
+        parameter['quantity'] -= shift
+        relationship.occupy += shift
+        relationship.time = datetime.now()
+        relationship.save()
+        cell.occupy += shift
+        cell.save()
+        warehouse.occupy += shift
+        warehouse.save()
+        board.occupation += shift
+        board.save()
+        return parameter,None
+    else:
+        shift = parameter['quantity']
+        relationship.occupy += shift
+        relationship.time = datetime.now()
+        relationship.save()
+        cell.occupy += shift
+        cell.save()
+        warehouse.occupy += shift
+        warehouse.save()
+        board.occupation += shift
+        board.save()
+        return None,cell
 
+@verify_decorator()
+def submitPutInForm(user:user_account_info=None, putInForm=None, **kwargs):
+    parameters = putInForm.pop('parameters')
+    total = sum([par['quantity'] for par in parameters])
+    if putInForm.pop('autodistribute'):
+        if user.role == RoleChoices.ADMIN:
+            capacity = warehouse_info.objects.aggregate(capcity=models.Sum('free'))['capacity']
+            cells = storage_cell_info.objects.all()
+        else:
+            capacity = user.warehouses.aggregate(capacity=models.Sum('free'))['capacity']
+            cells = storage_cell_info.objects.filter(warehouse__users=user)
+        if capacity < total:
+            raise Exception("not enough space")
+    else:
+        cells = []
+        capacity = 0
+        for id in putInForm.pop('storeid'):
+            cell = storage_cell_info.objects.get(uid=id)
+            if not user in cell.warehouse.users: # todo: check if it can work
+                raise Exception("unauthorized operation")
+            cells.append(cell)
+            capacity += cell.free
+        if capacity < total:
+            raise Exception("not enough space")
+    entry = entry_info(next(entry_uid),datetime.now(),user.uid)
+    entry.save()
+    for parameter in parameters:
+        entry_product_relationship(parameter['index'],entry.uid,parameter['quantity']).save()
+    it = iter(cells)
+    cell = next(it)
+    # todo: check if right
+    for parameter in parameters:
+        while(parameter):
+            parameter,cell = _storeIntoCell(parameter,cell)
+            if(cell):
+                cell = next(it)
+    return {'status':'success'}
+
+def _getFromCell(parameter,cell:storage_cell_info):
+    try:
+        relationship = cell.products_related.get(product__uid=parameter['index'])
+    except:
+        return parameter,None
+    warehouse = cell.warehouse
+    try:
+        board = main_board.objects.get(date=datetime.today(),warehouse=warehouse)
+    except:
+        board = main_board(date=datetime.today(), warehouse=warehouse.uid)
+        board.occupation = main_board.objects.filter(warehouse=warehouse).order_by('-date')[0].occupation
+        board.save()
+    if parameter['quantity']>relationship.occupy:
+        shift = relationship.occupy
+        parameter['quantity'] -= shift
+        relationship.delete()
+        cell.occupy -= shift
+        cell.save()
+        warehouse.occupy -= shift
+        warehouse.save()
+        board.occupation -= shift
+        board.save()
+        return parameter,None
+    else:
+        shift = parameter['quantity']
+        relationship.occupy -= shift
+        relationship.time = datetime.now()
+        relationship.save()
+        cell.occupy -= shift
+        cell.save()
+        warehouse.occupy -= shift
+        warehouse.save()
+        board.occupation -= shift
+        board.save()
+        return None,cell
+
+
+@verify_decorator()
+def submitTakeoutForm(user:user_account_info=None,takeOutForm=None,**kwargs):
+    parameters = takeOutForm.pop('parameters')
+    total = sum([par['quantity'] for par in parameters])
+    if takeOutForm.pop('autodistribute'):
+        if user.role == RoleChoices.ADMIN:
+            # capacity = warehouse_info.objects.aggregate(capcity=models.Sum('free'))['capacity']
+            cells = storage_cell_info.objects.all()
+        else:
+            # capacity = user.warehouses.aggregate(capacity=models.Sum('free'))['capacity']
+            cells = storage_cell_info.objects.filter(warehouse__users=user)
+        # if capacity < total:
+        #     raise Exception("not enough space")
+    else:
+        cells = []
+        # capacity = 0
+        for id in takeOutForm.pop('storeid'):
+            cell = storage_cell_info.objects.get(uid=id)
+            if not user in cell.warehouse.users: # todo: check if it can work
+                raise Exception("unauthorized operation")
+            cells.append(cell)
+            # capacity += cell.free
+        # if capacity < total:
+        #     raise Exception("not enough space")
+    shipment = shipment_info(next(entry_uid),datetime.now(),user.uid)
+    shipment.save()
+    for parameter in parameters:
+        shipment_product_relationship(parameter['index'],shipment.uid,parameter['quantity']).save()
+    it = iter(cells)
+    cell = next(it)
+    # todo: check if right
+    for parameter in parameters:
+        while(parameter):
+            parameter,cell = _getFromCell(parameter,cell)
+            if(cell):
+                cell = next(it)
+    return {'status':'success'}
+
+# ////////////////////////////////////////////////////////////
+# 看板
+# ////////////////////////////////////////////////////////////
+
+# GET METHOD
+@verify_decorator()
+def getWarehouseBasicInfo(user:user_account_info=None,**kwargs):
+    import random
+    return {
+        'status': 'success',
+        'basicInfo': {
+            'storeBatches': 10,
+            'storeAmount': 10,
+            'storeMoney': 10,
+            'deliverBatches': 10,
+            'deliverAmount': 10,
+            'deliverMoney': 10,
+        },
+        'storeDeliverGraphOpiton': {
+            'visualMap': {
+                'min': 0,
+                'max': 10000,
+                'type': 'piecewise',
+                'orient': 'horizontal',
+                'left': 'center',
+                'top': 65
+            },
+            'calendar': {
+                'top': 120,
+                'left': 30,
+                'right': 30,
+                'cellSize': ['auto', 13],
+                'range': '2016',
+                'itemStyle': {
+                    'borderWidth': 0.5
+                },
+                'yearLabel': {'show': False}
+            },
+            'series': {
+                'type': 'heatmap',
+                'coordinateSystem': 'calendar',
+                'data': [[(date(2020,1,1) + timedelta(d)).strftime("%Y-%m-%d"),random.randint(1,100)] for d in range(365)]
+            }
+        },
+        'occupationStateGraphOption': None
+    }
+
+# GET METHOD
+@verify_decorator()
+def getWarehouseAffairs(user:user_account_info=None,**kwargs):
+    return {
+        'status':'success',
+        'affairs':[
+            {
+                'time':datetime.now(),
+                'type':'store',
+                'detail':'dasfsdaf',
+                'operator':'dafasregtsoruiejgw'
+            },
+            {
+                'time': datetime.now(),
+                'type': 'deliver',
+                'detail': 'dasfsdaf',
+                'operator': 'dafasregtsoruiejgw'
+            }
+        ]
+    }
 
 # ////////////////////////////////////////////////////////////
 # 零件相关
@@ -141,7 +384,7 @@ def _getProduct(productInfo: product_info = None, user=None):
         parameters.append(parameter)
 
     workshops = []
-
+    # fixme: bugs here
     measurePlanInfos = productInfo.measure_plans.filter(
         workshop__worker=user) if user else productInfo.measure_plans.all()
     for measurePlanInfo in measurePlanInfos:

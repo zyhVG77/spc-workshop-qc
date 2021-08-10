@@ -236,12 +236,12 @@ export default {
     changePeriod: function (p) {
       this.periodTime = p
       // Fetch information of the period
-      WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => this.basicInfo = info)
+      WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => this.basicInfo = info.basicInfo)
     }
   },
   mounted() {
     // Fetch basic information about the warehouse
-    WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => this.basicInfo = info)
+    WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => this.basicInfo = info.basicInfo)
     // Fetch notifications of the warehouse
     WarehouseApi.getWarehouseAffairs(affairs => this.affairs = affairs)
   }

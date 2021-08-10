@@ -36,7 +36,7 @@ warehouse_patterns = [
     path('GetStorageCells', lambda request: myJsonResponse(getStorageCells(request))),
     path('GetWarehouseInfo', lambda request: myJsonResponse(getWarehouseInfo(request))), # todo: url in documentation is wrong
     path('GetNumberOfStorageCells', lambda request: myJsonResponse(getNumberOfStorageCells(request))),
-    path('GetStorageCellDetail', lambda request: myJsonResponse(getStorageCells(request))),
+    path('GetStorageCellDetail', lambda request: myJsonResponse(getStorageCellDetail(request))),
 
     path('SubmitMeasurePlan', lambda request: myJsonResponse(submitMeasurePlan(request))),
     path('GetMeasurePlans', lambda request: myJsonResponse(getMeasurePlans(request))),
@@ -51,6 +51,11 @@ warehouse_patterns = [
 
     path('GetReportDetailHtml', lambda request:myJsonResponse(getDetailReport(request))),  # todo: not Json Response
 
+    path('submitPutInform',lambda request:myJsonResponse(submitPutInForm(request))),
+    path('submitTakeoutForm',lambda request:myJsonResponse(submitTakeoutForm(request))),
+
+    path('GetWarehouseBasicInfo',lambda request:myJsonResponse(getWarehouseBasicInfo(request))),
+    path('GetWarehouseAffairs',lambda request:myJsonResponse(getWarehouseAffairs(request)))
     # path('GetAllWorkshopsInfo',lambda request:myJsonResponse(getAllWorkshopInfo(request))),
     # path('SubmitWorkshop',lambda request:myJsonResponse(alterWorkshops(request))),
     # path('DeleteWorkshop',lambda request:myJsonResponse(deleteWorkshop(request)))

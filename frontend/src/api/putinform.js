@@ -1,7 +1,7 @@
 import axios from 'axios'
 const PutInFormApi = {
     submitPutInForm: function (data) {
-        axios.post('/api/putinform/submitPutInForm',data)
+        axios.post('/api/warehouse/submitPutInForm',data)
          .then(resp => {
               if (resp.data.status === 'success')
                   console.log(resp);

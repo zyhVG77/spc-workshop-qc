@@ -312,7 +312,7 @@ def getDetailReport(user: user_account_info = None, id=None, **kwargs):
 def getRelationshipForm(user:user_account_info=None, userid=None, **kwargs):
     if user.role != RoleChoices.ADMIN:
         raise Exception('unauthorized operation')
-    targetUser = user_account_info.objects.get(uid=userid)
+    targetUser = user_account_info.objects.get(uid=userid[0])
     return {
         'status':'success',
         'relationshipform':[
@@ -337,6 +337,7 @@ def getAllWorkshopsId(user:user_account_info=None, **kwargs):
         ]
     }
 
+# todo: 需要更进一步的讨论，关于用户添加
 @verify_decorator()
 def submitRelationship(user:user_account_info=None, **kwargs):
     if user.role != RoleChoices.ADMIN:
