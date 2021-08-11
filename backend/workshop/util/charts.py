@@ -379,7 +379,7 @@ def generateXbarsEchartsDict(graph):
 
 
 def generatePNpCUEchartsDict(graph):
-    from database.util.graphCheck import pChart, npChart, cChart, uChart
+    from workshop.util.graphCheck import pChart, npChart, cChart, uChart
     if type(graph) == pChart:
         subText = 'p Chart'
     elif type(graph) == npChart:
@@ -489,7 +489,7 @@ def generatePNpCUEchartsDict(graph):
 
 
 def generateReportDict(graph):
-    from database.util.graphCheck import Xbar_R, Xbar_s, I_MR, pChart, npChart, cChart, uChart
+    from workshop.util.graphCheck import Xbar_R, Xbar_s, I_MR, pChart, npChart, cChart, uChart
     class myLines():
         def __init__(self):
             self.title = None

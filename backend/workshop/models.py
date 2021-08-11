@@ -138,7 +138,7 @@ class workshop_info(models.Model):
     description = models.CharField(max_length=256, null=True,
                                    help_text='车间描述'
                                    )
-    workers = models.ManyToManyField(user_account_info, null=True,
+    workers = models.ManyToManyField(user_account_info,
                                related_name='workshops',
                                help_text='可见用户'
                                )

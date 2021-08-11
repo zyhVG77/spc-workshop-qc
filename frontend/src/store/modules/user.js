@@ -96,7 +96,8 @@ const actions = {
             )
         })
     },
-    modifyPwd: function(payload) {
+    // eslint-disable-next-line no-unused-vars
+    modifyPwd: function({commit},payload) {
         return new Promise((resolve, reject) => {
             UserApi.modifyPwd(payload,
                 () => {

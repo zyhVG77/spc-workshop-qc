@@ -1,4 +1,4 @@
-from workshop.models import *
+from warehouse.models import *
 from user.util.utils import *
 
 UNK = 'UNK' # 接口函数默认值
@@ -7,6 +7,7 @@ UNK = 'UNK' # 接口函数默认值
 SCALE = 1 # ecnarts数据图纵轴缩放程度
 MAXCOLSPAN = 10 # 详细分析报告中，一行最多能容纳的子组个数
 TEMPLATENAME = 'Report.html' # 渲染异常分析报告模板文件名 templates/Report.html
+CELLSPERPAGE = 100 # 展示储位时每页的储位个数
 # DEBUG = True # 后端程序运行时是否允许输出信息
 SPC_parameters = { # SPC控制图常数表
     'XR':{
@@ -70,9 +71,15 @@ if DEBUG:
 
 try:
     if DEBUG:
-        print('\nWorkshop idIterators')
+        print('\nWarehouse idIterators')
         print('---------------------------------------')
+    warehouse_uid = warehouse_info.objects.last()
+    storage_cell_uid = storage_cell_info.objects.last()
     product_uid = product_info.objects.last()
+    storage_cell_product_relationship_uid = storage_cell_product_relationship.objects.last()
+    entry_uid = entry_info.objects.last()
+    shipment_uid = shipment_info.objects.last()
+
     par_uid = parameter_info.objects.last()
     control_plan_uid = control_plan_info.objects.last()
     measure_plan_uid = measure_plan_info.objects.last()
@@ -81,12 +88,17 @@ try:
     control_point_uid = control_point_info.objects.last()
     abnormality_uid = abnormality_info.objects.last()
 except:
-    product_uid = par_uid = control_plan_uid = measure_plan_uid = measure_form_uid = \
-    parameter_data_uid = control_point_uid = abnormality_uid = None
+    warehouse_uid = storage_cell_uid = storage_cell_product_relationship_uid = product_uid = par_uid = control_plan_uid = measure_plan_uid = measure_form_uid = \
+    entry_uid = shipment_uid = parameter_data_uid = control_point_uid = abnormality_uid = None
     if DEBUG:
         print('Initiallize idIterators failed')
 
+warehouse_uid = int(warehouse_uid.uid if warehouse_uid else -1) + 1
+storage_cell_uid = int(storage_cell_uid.uid if storage_cell_uid else -1) + 1
 product_uid = int(product_uid.uid if product_uid else -1) + 1
+storage_cell_product_relationship_uid = int(storage_cell_product_relationship_uid.uid if storage_cell_product_relationship_uid else -1) + 1
+entry_uid = int(entry_uid.uid if entry_uid else -1) + 1
+shipment_uid = int(shipment_uid.uid if shipment_uid else -1) + 1
 par_uid = int(par_uid.uid if par_uid else -1) + 1
 control_plan_uid = int(control_plan_uid.uid if control_plan_uid else -1) + 1
 measure_plan_uid = int(measure_plan_uid.uid if measure_plan_uid else -1) + 1
@@ -96,8 +108,12 @@ control_point_uid = int(control_point_uid.uid if control_point_uid else -1) + 1
 abnormality_uid = int(abnormality_uid.uid if abnormality_uid else -1) + 1
 
 if DEBUG:
+    print('warehouse_uid: ',warehouse_uid)
+    print('storage_cell_uid: ',storage_cell_uid)
     print('product_uid: ',product_uid)
-    print('uesr_uid: ',user_uid)
+    print('storage_cell_product_relationship_uid: ',storage_cell_product_relationship_uid)
+    print('entry_uid: ',entry_uid)
+    print('shipment_uid: ', shipment_uid)
     print('par_uid: ',par_uid)
     print('control_plan_uid: ',control_plan_uid)
     print('measure_plan_uid: ',measure_plan_uid)
@@ -106,8 +122,12 @@ if DEBUG:
     print('control_point_uid: ',control_point_uid)
     print('abnormality_uid: ',abnormality_uid)
 
-user_uid = idIter(user_uid)
+warehouse_uid = idIter(warehouse_uid)
+storage_cell_uid = idIter(storage_cell_uid)
 product_uid = idIter(product_uid)
+storage_cell_product_relationship_uid = idIter(storage_cell_product_relationship_uid)
+entry_uid = idIter(entry_uid)
+shipment_uid = idIter(shipment_uid)
 par_uid = idIter(par_uid)
 control_plan_uid = idIter(control_plan_uid)
 measure_plan_uid = idIter(measure_plan_uid)
