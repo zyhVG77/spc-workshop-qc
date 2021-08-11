@@ -85,7 +85,9 @@
 										<div class="col-xl-2 col-lglg-2 col-md-2 col-sm-2 col-12" >
 											<div class="form-group">
 												<label for="compName">零件名称</label>
-												<input type="text" class="form-control" id="compName" value="齿轮H300" v-model = "para.compName">
+												<select class="custom-select" id="compName" v-model="para.index">
+													<option v-for='(w, k) in products' :key='k' :value="w.id">{{ w.name }}</option>
+												</select>
 											</div>
 										</div>
 										<div class="col-xl-2 col-lglg-2 col-md-2 col-sm-2 col-12">
@@ -175,10 +177,12 @@
 
 <script>
 import PutInFormApi from "@/api/putinform"
+import WarehouseApi from "../../api/warehouse";
 export default {
 	name: "PutInForm",
     data: function() {
 		return{
+			products:[],
 			putInForm:{
 				inputDate:new Date(),
 				seller:"",
@@ -190,12 +194,12 @@ export default {
 				totalcomment:"",
 				autodistribute:"true",
 				storeid:[],
-				parameters:[{compName:"", model:"", unit:"", quantity:"", price:"", totalPrice:"", comment:"",}]
+				parameters:[{index:"", model:"", unit:"", quantity:"", price:"", totalPrice:"", comment:"",}]
 			},
 		}
     },
 	methods:{
-		getEmptyParameter: () => ({compName:"", model:"", unit:"", quantity:"", price:"", totalPrice:"", comment:"",}),
+		getEmptyParameter: () => ({index:"", model:"", unit:"", quantity:"", price:"", totalPrice:"", comment:"",}),
 		addItem: function () { this.putInForm.parameters.push(this.getEmptyParameter()) },
         remove: function (index) { this.putInForm.parameters.splice(index, 1) },
 		distribute: function()
@@ -207,8 +211,14 @@ export default {
 			PutInFormApi.submitPutInForm(this.putInForm)
             //this.$http.post("")
         }
+	},
+	mounted() {
+		WarehouseApi.getAllProducts(
+				products => this.products = products,
+				err => console.log(err),
+				err => console.log(err)
+		)
 	}
-
 }
 </script>
 

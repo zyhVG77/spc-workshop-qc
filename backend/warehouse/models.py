@@ -39,24 +39,31 @@ class main_board(models.Model):
                                   )
     store_batches = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                        help_text='入库批数',
+                                        default=0
                                        )
     store_amount = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                        help_text='入库数量',
+                                       default=0
                                        )
     store_money = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                        help_text='入库金额',
+                                      default=0
                                        )
     deliver_batches = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                        help_text='出库批数',
+                                          default=0
                                        )
     deliver_amount = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                        help_text='出库数量',
+                                         default=0
                                        )
     deliver_money = models.IntegerField(validators=(validators.MinValueValidator(0),),
                                        help_text='出库金额',
+                                        default=0
                                        )
     occupation = models.FloatField(validators=(validators.MinValueValidator(0),),
                                        help_text='仓库占用情况',
+                                   default=0
                                        )
 
 

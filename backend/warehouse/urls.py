@@ -51,7 +51,7 @@ warehouse_patterns = [
 
     path('GetReportDetailHtml', lambda request:myJsonResponse(getDetailReport(request))),  # todo: not Json Response
 
-    path('submitPutInform',lambda request:myJsonResponse(submitPutInForm(request))),
+    path('submitPutInForm',lambda request:myJsonResponse(submitPutInForm(request))),
     path('submitTakeoutForm',lambda request:myJsonResponse(submitTakeoutForm(request))),
 
     path('GetWarehouseBasicInfo',lambda request:myJsonResponse(getWarehouseBasicInfo(request))),
