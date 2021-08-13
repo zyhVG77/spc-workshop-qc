@@ -68,7 +68,9 @@
     warehouses: [
         {
             id: 'id of the warehouse',
-            name: 'name of the warehouse'
+            name: 'name of the warehouse',
+            capacity:'capacity of the house',
+            occupy:'occupy of the house'  
         },
         {
             // ...

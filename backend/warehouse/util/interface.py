@@ -82,9 +82,9 @@ def getStorageCells(user:user_account_info = None, **kwargs):
 @verify_decorator()
 def getWarehouseInfo(user:user_account_info = None, **kwargs):
     if user.role_warehouse == RoleChoices.ADMIN:
-        warehouses = [{'id':warehouse.uid,'name':warehouse.name} for warehouse in warehouse_info.objects.all()]
+        warehouses = [{'id':warehouse.uid,'name':warehouse.name,'capacity':warehouse.capacity,'occupy':warehouse.occupy} for warehouse in warehouse_info.objects.all()]
     else:
-        warehouses = [{'id':warehouse.uid,'name':warehouse.name} for warehouse in user.warehouses.all()]
+        warehouses = [{'id':warehouse.uid,'name':warehouse.name,'capacity':warehouse.capacity,'occupy':warehouse.occupy} for warehouse in user.warehouses.all()]
     response = {
         'status':'success',
         'warehouses':warehouses

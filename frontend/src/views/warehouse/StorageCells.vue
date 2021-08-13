@@ -132,6 +132,18 @@
         </div>
       </div>
     </div>
+    <div class="row gutters">
+      <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">仓库总体状况</div>
+          </div>
+          <div class="card-body pt-0">
+            <div id="TreeMapGraph" class="chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -139,6 +151,7 @@
 <script>
 import {generateColor} from '@/assets/js/color_gradient'
 import WarehouseApi from "@/api/warehouse";
+import * as echarts from 'echarts';
 
 export default {
   name: "StorageCells",
@@ -222,11 +235,144 @@ export default {
     },
     closeDetail: function () {
       this.detail_show = false
+    },
+    async initTreeMapGraph() {
+      const treeMapGraph = document.getElementById('TreeMapGraph')
+      const graph = echarts.init(treeMapGraph)
+      window.onresize = function () {
+        graph.resize()
+      }
+
+      ///////////////////////////////////////////////////////////
+      // option rendering start
+      ///////////////////////////////////////////////////////////
+
+      var getCell = async (cell) => {
+        await WarehouseApi.getStorageCellDetail(cell.name, rawCell => {
+          cell.value = rawCell.capacity + 11 // todo: enable choose
+          for (var k = 0; k < rawCell.products.length; ++k) {
+            var rawProduct = rawCell.products[k];
+            cell.children.push({
+              name: rawProduct.name,
+              value: rawProduct.quantity,
+              // tooltip: {formatter: '<b>零件名称:</b>' + rawProduct.name + '</br><b>id:</b>' + rawProduct.id + '</br><b>数量:</b>' + rawProduct.quantity + '</br><b>更新时间</b>' + rawProduct.start_time}
+            })
+          }
+        })
+      }
+
+      var getCells = async (rawWarehouse) => {
+        await WarehouseApi.getStorageCells(0, 'all', rawWarehouse.id, cells => {
+          for (var j = 0; j < cells.length; ++j) {
+            var cell = {
+              value: 0,
+              name: cells[j].id,
+              children: []
+              // tooltip: {formatter: '<b>容量:</b>' + rawCell.capacity + '</br><b>占用:</b>' + rawCell.occupy}
+            }
+            rawWarehouse.children.push(cell)
+            getCell(cell)
+          }
+        })
+      }
+      var wareHouseData = []
+      for (var i = 0; i < this.warehouses.length; ++i) {
+        wareHouseData.push({
+          value: this.warehouses[i].capacity, // todo: enable choose
+          name: this.warehouses[i].name,
+          id: this.warehouses[i].id,
+          children: [],
+          tooltip: {formatter: '<b>容量:</b>' + this.warehouses[i].capacity + '</br><b>占用:</b>' + this.warehouses[i].occupy}
+        })
+        await getCells(wareHouseData[i])
+      }
+      {
+        var option = {
+          title: {
+            //text: 'Disk Usage',
+            left: 'center'
+          },
+
+          tooltip: {
+            // formatter: function (info) {
+            //     var value = info.value;
+            //     var treePathInfo = info.treePathInfo;
+            //     var treePath = [];
+            //
+            //     for (var i = 1; i < treePathInfo.length; i++) {
+            //         treePath.push(treePathInfo[i].name);
+            //     }
+            //
+            //     return [
+            //         '<div class="tooltip-title">' + echarts.format.encodeHTML(treePath.join('/')) + '</div>',
+            //         'Disk Usage: ' + echarts.format.addCommas(value) + ' KB',
+            //     ].join('');
+            // }
+          },
+
+          series: [
+            {
+              // name: 'Disk Usage',
+              type: 'treemap',
+              // visibleMin: 10,
+              // label: {
+              //     show: true,
+              //     formatter: '{b}'
+              // },
+              // upperLabel: {
+              //     show: true,
+              //     height: 30
+              // },
+              itemStyle: {
+                borderColor: '#fff'
+              },
+              levels: [
+                {
+                  itemStyle: {
+                    borderColor: '#777',
+                    borderWidth: 0,
+                    gapWidth: 1
+                  },
+                  upperLabel: {
+                    show: false
+                  }
+                },
+                {
+                  itemStyle: {
+                    borderColor: '#555',
+                    borderWidth: 5,
+                    gapWidth: 1
+                  },
+                  emphasis: {
+                    itemStyle: {
+                      borderColor: '#ddd'
+                    }
+                  }
+                },
+                {
+                  colorSaturation: [0.35, 0.5],
+                  itemStyle: {
+                    borderWidth: 5,
+                    gapWidth: 1,
+                    borderColorSaturation: 0.6
+                  }
+                }
+              ],
+              data: wareHouseData
+            }
+          ]
+        }
+        console.log(option)
+        graph.setOption(option)
+      }
+      ///////////////////////////////////////////////////////////
+      // option rendering end
+      ///////////////////////////////////////////////////////////
     }
   },
   mounted() {
     // Get all warehouse info
-    WarehouseApi.getWarehouseInfo(warehouses => this.warehouses = warehouses)
+    WarehouseApi.getWarehouseInfo(warehouses => this.warehouses = warehouses).then(this.initTreeMapGraph)
     // Get default storage cells
     WarehouseApi.getStorageCells(
         0,
@@ -246,5 +392,9 @@ export default {
 td:hover {
   box-shadow: 0 0 21px 5px rgba(33,33,33,.2);
   cursor: pointer;
+}
+.chart {
+  width: 100%;
+  height: 250px;
 }
 </style>

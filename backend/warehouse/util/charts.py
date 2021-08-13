@@ -628,6 +628,9 @@ def generateReportDict(graph):
 # 看板
 # ////////////////////////////////////////////////////////////
 
+def generateWarehouseTreeMap(data:list):
+    pass
+
 def generateMainBoardHeatMap(data:list):
     return {
         'tooltip': {

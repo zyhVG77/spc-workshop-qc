@@ -3,19 +3,18 @@ import axios from 'axios'
 const WarehouseApi = {
     // Storage Cells
     getStorageCells: function (order, page, warehouse_id, success) {
-        axios.get('/api/warehouse/GetStorageCells', {
+        return axios.get('/api/warehouse/GetStorageCells', {
             params: {
                 order, page, warehouse_id
             }
         })
             .then(resp => {
-                console.log(resp.data.storage_cells)
                 success(resp.data.storage_cells)
             })
             .catch(e => console.log(e))
     },
     getWarehouseInfo: function (success) {
-        axios.get('/api/warehouse/GetWarehouseInfo')
+        return axios.get('/api/warehouse/GetWarehouseInfo')
             .then(resp => {
                 success(resp.data.warehouses)
             })
@@ -29,7 +28,7 @@ const WarehouseApi = {
             .catch(e => console.log(e))
     },
     getStorageCellDetail: function (cell_id, success) {
-        axios.get('/api/warehouse/GetStorageCellDetail?id=' + cell_id)
+        return axios.get('/api/warehouse/GetStorageCellDetail?id=' + cell_id)
             .then(resp => {
                 success(resp.data.detail)
             })
