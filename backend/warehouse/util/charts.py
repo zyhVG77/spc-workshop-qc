@@ -3,6 +3,9 @@ from warehouse.util.utils import SCALE, MAXCOLSPAN
 from datetime import datetime
 import json
 
+# ////////////////////////////////////////////////////////////
+# 控制图
+# ////////////////////////////////////////////////////////////
 
 def generateXbarRIMREchartsDict(graph):
     progressIndex = graph.progressIndex
@@ -377,9 +380,8 @@ def generateXbarsEchartsDict(graph):
         options['series'][0]['markLine']['data'].append(lslx)
     return options
 
-
 def generatePNpCUEchartsDict(graph):
-    from database.util.graphCheck import pChart, npChart, cChart, uChart
+    from warehouse.util.graphCheck import pChart, npChart, cChart, uChart
     if type(graph) == pChart:
         subText = 'p Chart'
     elif type(graph) == npChart:
@@ -489,7 +491,7 @@ def generatePNpCUEchartsDict(graph):
 
 
 def generateReportDict(graph):
-    from database.util.graphCheck import Xbar_R, Xbar_s, I_MR, pChart, npChart, cChart, uChart
+    from warehouse.util.graphCheck import Xbar_R, Xbar_s, I_MR, pChart, npChart, cChart, uChart
     class myLines():
         def __init__(self):
             self.title = None
@@ -599,8 +601,6 @@ def generateReportDict(graph):
 
     abnormalities = graph.getAbnormality()
 
-
-
     context = {
         'product_id': graph.measure_plan.product.uid,
         'product_name': graph.measure_plan.product.name,
@@ -623,3 +623,66 @@ def generateReportDict(graph):
     }
 
     return context
+
+# ////////////////////////////////////////////////////////////
+# 看板
+# ////////////////////////////////////////////////////////////
+
+def generateMainBoardHeatMap(data:list):
+    return {
+        'tooltip': {
+            'position': 'top',
+            'formatter': '{c0}'
+        },
+        'visualMap': {
+            'type': 'piecewise',
+            'orient': 'horizontal',
+            'left': 'center',
+            'top':0,
+            'inRange': {
+                'color': ['#C7DBFF','#0F419A']
+            }
+        },
+        'calendar': {
+            'top':60,
+            'bottom':30,
+            'cellSize': 'auto',
+            'range': '2020',
+            'itemStyle': {
+                'borderWidth': 0.5
+            },
+            'dayLabel': {
+                'nameMap': 'cn'
+            },
+            'monthLabel': {
+                'nameMap': 'cn',
+                'textStyle': {
+                    'fontSize': 15,
+                    'color': '#999'
+                }
+            },
+            'yearLabel': {
+                'margin': 50,
+                'textStyle': {
+                    'fontSize': 30
+                }
+            },
+        },
+        'series': {
+            'type': 'heatmap',
+            'coordinateSystem': 'calendar',
+            'data': data
+        }
+    }
+
+def generateMainBoardSunburstMap(data):
+    return {
+        'series': {
+            'type': 'sunburst',
+            'data': data,
+            'radius': [0, '90%'],
+            'label': {
+                'rotate': 'radial'
+            }
+        }
+    }

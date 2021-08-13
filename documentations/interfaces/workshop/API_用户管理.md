@@ -20,7 +20,7 @@
     status: 'success',
     relationshipform: [
         {
-            workshopid:'id of the workshop that bond with the user'
+            workshopId:'id of the workshop that bond with the user'
         },
         {
             /*
@@ -106,7 +106,7 @@
 }
 ```
 
-## /api/user/submitRelatonship
+## /api/workshop/submitRelatonship
 
 描述：提交用户管理内容
 
@@ -118,7 +118,7 @@
 myform:{
               checkrole: "the role of the user",
               userid:"the id of the user",
-              mordify:"whether the user is a new one or not",
+              mordify:"whether the user is a new one or not", //未用到
               relations: [
                   {
                       workshopId: "id of the workshop",

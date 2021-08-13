@@ -3,7 +3,7 @@ from django.shortcuts import render
 from workshop.util.graphCheck import getGraph
 from django.http.response import JsonResponse
 from django.http.request import HttpRequest
-from workshop.util.interface import *
+from warehouse.util.interface import *
 
 def get_graph(request): # 这个用于测试, 无实际意义
     data = getGraph('00000000003','00000000003')
@@ -32,7 +32,16 @@ class myJsonResponse(JsonResponse):
 #     path('UpdateUserInfo',lambda request:myJsonResponse(updateUserInfo(request)))
 # ]
 
-workshop_patterns = [
+warehouse_patterns = [
+    path('GetStorageCells', lambda request: myJsonResponse(getStorageCells(request))),
+    path('GetWarehouseInfo', lambda request: myJsonResponse(getWarehouseInfo(request))), # todo: url in documentation is wrong
+    path('GetNumberOfStorageCells', lambda request: myJsonResponse(getNumberOfStorageCells(request))),
+    path('GetStorageCellDetail', lambda request: myJsonResponse(getStorageCellDetail(request))),
+
+    path('SubmitMeasurePlan', lambda request: myJsonResponse(submitMeasurePlan(request))),
+    path('GetMeasurePlans', lambda request: myJsonResponse(getMeasurePlans(request))),
+    path('DeleteMeasurePlan', lambda request: myJsonResponse(deleteMeasurePlan)),
+
     path('GetAllProducts',lambda request:myJsonResponse(getProducts(request))),
     path('SubmitProduct',lambda request:myJsonResponse(alterProducts(request))),
     path('DeleteProduct',lambda request:myJsonResponse(deleteProduct(request))),
@@ -42,12 +51,17 @@ workshop_patterns = [
 
     path('GetReportDetailHtml', lambda request:myJsonResponse(getDetailReport(request))),  # todo: not Json Response
 
-    path('GetAllWorkshopsInfo',lambda request:myJsonResponse(getAllWorkshopInfo(request))),
-    path('SubmitWorkshop',lambda request:myJsonResponse(alterWorkshops(request))),
-    path('DeleteWorkshop',lambda request:myJsonResponse(deleteWorkshop(request)))
+    path('submitPutInForm',lambda request:myJsonResponse(submitPutInForm(request))),
+    path('submitTakeoutForm',lambda request:myJsonResponse(submitTakeoutForm(request))),
+
+    path('GetWarehouseBasicInfo',lambda request:myJsonResponse(getWarehouseBasicInfo(request))),
+    path('GetWarehouseAffairs',lambda request:myJsonResponse(getWarehouseAffairs(request)))
+    # path('GetAllWorkshopsInfo',lambda request:myJsonResponse(getAllWorkshopInfo(request))),
+    # path('SubmitWorkshop',lambda request:myJsonResponse(alterWorkshops(request))),
+    # path('DeleteWorkshop',lambda request:myJsonResponse(deleteWorkshop(request)))
 ]
 
 urlpatterns = [
     path('test',get_graph),
-    path('',include(workshop_patterns))
+    path('', include(warehouse_patterns))
 ]

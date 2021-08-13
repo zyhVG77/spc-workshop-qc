@@ -21,3 +21,4 @@ except:
         print('Initiallize idIterators failed')
 
 user_uid = int(user_uid.uid if user_uid else -1) + 1
+user_uid = idIter(user_uid)

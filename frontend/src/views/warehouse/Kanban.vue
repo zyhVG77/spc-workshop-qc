@@ -67,7 +67,7 @@
           <div class="card-body">
             <div class="row gutters align-items-center">
               <div class="col-xl-10 col-lg-9 col-md-12 col-sm-12 col-12">
-                <div id="lineRevenueGraph"></div>
+                <div id="lineRevenueGraph" class="chart"></div>
               </div>
               <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
                 <div class="monthly-avg">
@@ -88,7 +88,17 @@
       </div>
     </div>
     <div class="row gutters">
-      <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">仓库占用情况</div>
+          </div>
+          <div class="card-body pt-0">
+            <div id="occupationStateGraph" class="chart2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
           <div class="card-header">
             <div class="card-title">动态</div>
@@ -174,6 +184,29 @@
 
 <script>
 import WarehouseApi from "@/api/warehouse";
+import * as echarts from 'echarts';
+
+// E-charts configuration
+// import {
+//   TitleComponent,
+//   ToolboxComponent,
+//   TooltipComponent,
+//   GridComponent,
+//   LegendComponent,
+//   MarkLineComponent,
+//   VisualMapComponent,
+// } from 'echarts/components';
+// import {
+//   LineChart,
+//   HeatmapChart,
+// } from 'echarts/charts';
+// import {
+//   CanvasRenderer
+// } from 'echarts/renderers';
+//
+// echarts.use(
+//         [TitleComponent, ToolboxComponent, TooltipComponent, GridComponent, LegendComponent, MarkLineComponent, LineChart, HeatmapChart, VisualMapComponent, CanvasRenderer]
+// );
 
 export default {
   name: "KanBan",
@@ -190,6 +223,8 @@ export default {
         storeMoney: 1000,
         deliverMoney: 1000
       },
+      storeDeliverGraph:null,
+      occupationStateGraph:null,
       periodTime: "today",
 
       affairs: [
@@ -236,18 +271,44 @@ export default {
     changePeriod: function (p) {
       this.periodTime = p
       // Fetch information of the period
-      WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => this.basicInfo = info)
+      WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => {
+        this.basicInfo = info.basicInfo
+        info.storeDeliverGraphOpiton && this.storeDeliverGraph.setOption(info.storeDeliverGraphOpiton,true)
+        info.occupationStateGraphOption && this.occupationStateGraph.setOption(info.occupationStateGraphOption,true)
+      })
     }
   },
   mounted() {
+    const lineRevenueGraphDom = document.getElementById('lineRevenueGraph')
+    this.storeDeliverGraph = echarts.init(lineRevenueGraphDom)
+    const my = this.storeDeliverGraph
+    const occupationStateGraphDom = document.getElementById('occupationStateGraph')
+    this.occupationStateGraph = echarts.init(occupationStateGraphDom)
+    const myOccup = this.occupationStateGraph
+    window.onresize = function () {
+      my.resize()
+      myOccup.resize()
+    }
     // Fetch basic information about the warehouse
-    WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => this.basicInfo = info)
+    WarehouseApi.getWarehouseKanbanInfo(this.periodTime, info => {
+      this.basicInfo = info.basicInfo;console.log(info.storeDeliverGraphOpiton)
+      info.storeDeliverGraphOpiton && this.storeDeliverGraph.setOption(info.storeDeliverGraphOpiton,true)
+      info.occupationStateGraphOption && this.occupationStateGraph.setOption(info.occupationStateGraphOption,true)
+    })
     // Fetch notifications of the warehouse
     WarehouseApi.getWarehouseAffairs(affairs => this.affairs = affairs)
   }
 }
 </script>
 
-<style scoped>
 
+<style scoped>
+.chart {
+  width: 100%;
+  height: 250px;
+}
+.chart2 {
+  width: 100%;
+  height: 350px;
+}
 </style>

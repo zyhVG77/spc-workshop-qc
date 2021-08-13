@@ -118,7 +118,7 @@ export default {
 
       // Encrypt Password with Bcrypt
       const salt = bcrypt.genSaltSync(10);
-      const rawPwdHash = bcrypt.hashSync(this.rawPwd, salt);
+      const rawPwdHash = this.rawPwd //bcrypt.hashSync(this.rawPwd, salt);
       const newPwdHash = bcrypt.hashSync(this.newPwd, salt);
       this.$store.dispatch('user/modifyPwd', { rawPwdHash, newPwdHash })
           .then(() => {

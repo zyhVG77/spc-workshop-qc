@@ -1,0 +1,4 @@
+django_cors_headers==3.7.0
+Django==3.2.5
+numpy==1.17.0
+database==0.6.0

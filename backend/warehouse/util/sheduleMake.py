@@ -1,6 +1,10 @@
-from warehouse.models import product_info, parameter_info, measure_plan_info, control_plan_info, warehouse_info
+from warehouse.models import product_info, parameter_info, measure_plan_info, control_plan_info, warehouse_info, \
+    storage_cell_product_relationship
 from warehouse.models import ValueTypeChoices, GraphTypeChoices
-from warehouse.util.utils import UNK, product_uid, par_uid, measure_plan_uid, control_plan_uid, DEBUG
+from warehouse.util.utils import UNK, product_uid, par_uid, measure_plan_uid, control_plan_uid, DEBUG, \
+    storage_cell_product_relationship_uid
+from datetime import datetime
+
 
 # ////////////////////////////////////////////////////////////
 # 产品相关
@@ -70,7 +74,7 @@ def delProduct(product_id):
 # 车间(控制计划)相关
 # ////////////////////////////////////////////////////////////
 
-def _addMeasurePlan(product_id, sample_size=5, batch_count=25, **kwargs):
+def _addMeasurePlan(product_id, cell_id, sample_size=5, batch_count=25,description=None, **kwargs):
     """
     add measure plan
     a product can have multiple measure plans
@@ -78,14 +82,20 @@ def _addMeasurePlan(product_id, sample_size=5, batch_count=25, **kwargs):
     measure_plan = None
 
     try:
-        measure_plan = measure_plan_info(next(measure_plan_uid), product_id, sample_size, None, batch_count)
+        try:
+            relationship_info = storage_cell_product_relationship.objects.get(product__uid=product_id,storage_cell__uid=cell_id)
+        except:
+            relationship_info = storage_cell_product_relationship(next(storage_cell_product_relationship_uid),cell_id,product_id,0,datetime.now(),description)
+
+        measure_plan = measure_plan_info(next(measure_plan_uid), relationship_info.uid, sample_size, None, batch_count)
         measure_plan.save()
 
         if DEBUG:
             print('\nAdd measure plan')
             print('---------------------------------------')
             print('uid: ', measure_plan.uid)
-            print('product: ', measure_plan.product)
+            print('product: ', measure_plan.relationship_info.product)
+            print('cell: ', measure_plan.relationship_info.storage_cell)
             print('sample_size: ', measure_plan.sample_size)
             print('current_uid: ', measure_plan.current_uid)
             print('batch_count: ', measure_plan.batch_count)
@@ -122,41 +132,11 @@ def _alterMeasurePlan(plan_id, **kwargs):
 
     return measure_plan
 
-
 def _delMeasurePlan(plan_id):
     if DEBUG:
         print('\nDelete measure plan, uid = ', plan_id)
     return measure_plan_info.objects.get(uid=plan_id).delete()
 
-# def addWorkshop(name=UNK,productId=None,batchSize=5,windowSize=25,description=None,worker=None, **kwargs):
-#     """
-#     workshop dont have id, it is bounded with measureplan
-#     """
-#     measure_plan = None
-#     workshop = None
-#     try:
-#         measure_plan = _addMeasurePlan(productId,batchSize,windowSize,**kwargs)
-#         workshop = workshop_info(measure_plan.uid,name,description,worker)
-#         workshop.save()
-#
-#         if DEBUG:
-#             print('\nAdd workshop')
-#             print('---------------------------------------')
-#             print('name: ', name)
-#             print('description: ', description)
-#             print('worker: ', worker)
-#
-#         return workshop
-#
-#     except Exception as e:
-#         if measure_plan:
-#             measure_plan.delete()
-#         if workshop:
-#             workshop.delete()
-#         if DEBUG:
-#             print('Add workshop failed')
-#         raise e
-#
 # def alterWorkshop(plan_id,**kwargs):
 #     measure_plan = _alterMeasurePlan(plan_id,**kwargs)
 #     workshop = workshop_info.objects.get(measure_plan = measure_plan)

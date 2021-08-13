@@ -1,10 +1,11 @@
 from base64 import b64encode, b64decode
 from functools import wraps
-from user.util.utils import TOKENTIMEOUT,DEBUG
+from user.util.utils import TOKENTIMEOUT, DEBUG, user_uid
 from user.models import *
 import random
 import time
 import json
+import bcrypt
 
 # ////////////////////////////////////////////////////////////
 # token相关
@@ -18,7 +19,6 @@ class userStatus():
         self.user = user
         self.token = token
         self.timeout = timeout
-
 
 def verify_decorator(verify: bool = True):
     def new_decorator(func):
@@ -37,17 +37,16 @@ def verify_decorator(verify: bool = True):
                     kwargs['user'] = _verifyToken(request.headers['Authentication'])
                 return func(**kwargs)
             except Exception as e:
-                raise e
                 # todo: unmark these codes
                 # return {
                 #     'status': 'fail',
-                #     'error_message': str(e)
+                #     'errorMsg': str(e)
                 # }
+                raise e
 
         return decorated
 
     return new_decorator
-
 
 def _getToken(user: user_account_info, withoutTimeout=True):
     token = b64encode(":".join([str(user.uid),
@@ -62,7 +61,6 @@ def _getToken(user: user_account_info, withoutTimeout=True):
 
     return token
 
-
 def _verifyToken(token):
     tmpTime = time.time()
 
@@ -75,8 +73,6 @@ def _verifyToken(token):
         raise Exception('invalid token')
     elif userTokens[userId].timeout == -1:
         if DEBUG:
-            print('\nAlter workshop')
-            print('---------------------------------------')
             print('Id:' + userId)
             print('validateTime:' + str(userTokens[userId].timeout) + '->' + str(userTokens[userId].timeout))
         return userTokens[userId].user
@@ -96,31 +92,24 @@ def _verifyToken(token):
 
 @verify_decorator(False)
 def confirmLogin(username=None, password=None, rememberMe=False, **kwargs):
-    try:
-        user = user_account_info.objects.get(name=username)
-        # todo: enable password verify
-        # if user.password_hash != password:
-        #     raise Exception("incorrect password")
-        response = {
-            'user': {
-                'id': user.uid,
-                'username': user.name,
-                'email': user.user_info.email,
-                'fullname': user.user_info.fullname,
-                'work_id': user.user_info.work_id,
-                'phone': user.user_info.phone,
-                'avatar': user.user_info.avatar,
-                'role': user.get_role_display(),
-            },
-            'status': 'success',
-            'token': _getToken(user, rememberMe)
-        }
-        return response
-    except Exception as e:
-        return {
-            'status': 'fail',
-            'error_message': str(e)
-        }
+    user = user_account_info.objects.get(name=username)
+    if not bcrypt.checkpw(password.encode(),user.password_hash.encode()):
+        raise Exception("incorrect password")
+    response = {
+        'user': {
+            'id': user.uid,
+            'username': user.name,
+            'email': user.user_info.email,
+            'fullname': user.user_info.fullname,
+            'work_id': user.user_info.work_id,
+            'phone': user.user_info.phone,
+            'avatar': user.user_info.avatar,
+            'role': user.get_role_display(),
+        },
+        'status': 'success',
+        'token': _getToken(user, rememberMe)
+    }
+    return response
 
 
 @verify_decorator()
@@ -140,14 +129,19 @@ def getUserInfo(user: user_account_info = None, **kwargs):
     }
     return response
 
+# default password: 123456
+def _addUser(name,password='$2a$10$mp0OfeLbviY2cePyMX.S1uwvzvBI4pdu5zYVQ/t/iaEQwrOEv/byO',role=RoleChoices.VIEWER,role_warehouse=RoleChoices.VIEWER,fullname=None,email=None,phone=None,work_id=None,avatar=None):
+    user = user_account_info(next(user_uid),name,password,role,role_warehouse)
+    user.save()
+    user_inf = user_info(user.uid,fullname,email,phone,work_id,avatar)
+    user_inf.save()
+    return user
 
 @verify_decorator()
 def updateUserInfo(user: user_account_info = None, **kwargs):
     userId = kwargs.pop('id')
     if user.role != RoleChoices.SUPEREDITOR and user.uid != userId:
         raise Exception('unauthorized operation')
-
-    # todo: considering if update role-like kwargs
     userInfo = None
     try:
         userInfo = user_account_info.objects.get(uid=userId).user_info
@@ -179,7 +173,7 @@ def updateUserInfo(user: user_account_info = None, **kwargs):
             userInfo = user_account_info.objects.get(uid=userId).user_info
         response = {
             'status': 'fail',
-            'error_message': str(e),
+            'errorMsg': str(e),
             'id': userId,
             'avatar': userInfo.avatar,
             'email': userInfo.email,
@@ -190,3 +184,28 @@ def updateUserInfo(user: user_account_info = None, **kwargs):
             'workId': userInfo.work_id
         }
         return response
+
+@verify_decorator()
+def modifyPassword(user:user_account_info=None,rawPwdHash=None,newPwdHash=None,**kwargs):
+    if not bcrypt.checkpw(rawPwdHash.encode(),user.password_hash.encode()):
+        raise Exception("incorrect password")
+    # todo: 理论上这个加盐哈希应当完全由后端来做
+    user.password_hash = newPwdHash
+    user.save()
+    return {'status':'success'}
+
+@verify_decorator()
+def getUserId(user:user_account_info=None, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    return {
+        'status':'success',
+        'userid':[
+            {
+                'id':user.uid,
+                'name':user.name,
+                'checkrole':user.get_role_display(),
+                'warehouserole':user.get_role_warehouse_display()
+            } for user in user_account_info.objects.all()
+        ]
+    }
