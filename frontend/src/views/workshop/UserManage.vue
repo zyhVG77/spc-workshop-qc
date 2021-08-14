@@ -118,11 +118,13 @@ export default {
         }
       },
       findRole:function(){
+        console.log("OK2")
         for (var i = 0; i < this.useridform.length; i++){
             if(this.useridform[i]["id"] === this.myform.userid){
                 this.myform.checkrole = this.useridform[i]["checkrole"]
             }
         }
+
         if(this.myform.checkrole === 'viewer') this.getRelations() // fixme: 判断是否是viewer，更新relations信息
       },
       getUserId:function(){
@@ -148,6 +150,7 @@ export default {
             )
       },
       getRelations:function (){
+          console.log("OK")
           this.myform.relations = [] //fixme: 将列表初始化为空
           for (var i = 0; i < this.workshopform.length;i++){
               this.myform.relations.push({}) //fixme: this.relations -> this.myform.relations

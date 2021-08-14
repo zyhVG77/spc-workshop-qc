@@ -5,7 +5,7 @@
         <li class="breadcrumb-item">欢迎, {{ currentUser.username }}</li>
       </ol>
       <div class="app-actions">
-        <button type="button" :class='periodTime === "today"?TAG_ACTIVE:TAG_SHUT' @click='changePeriod("today")'>今天</button>
+<!--        <button type="button" :class='periodTime === "today"?TAG_ACTIVE:TAG_SHUT' @click='changePeriod("today")'>今天</button>-->
         <button type="button" :class='periodTime === "7days"?TAG_ACTIVE:TAG_SHUT' @click='changePeriod("7days")'>近7天</button>
         <button type="button" :class='periodTime === "15days"?TAG_ACTIVE:TAG_SHUT' @click='changePeriod("15days")'>近15天</button>
         <button type="button" :class='periodTime === "1month"?TAG_ACTIVE:TAG_SHUT' @click='changePeriod("30days")'>近30天</button>
@@ -225,7 +225,7 @@ export default {
       },
       storeDeliverGraph:null,
       occupationStateGraph:null,
-      periodTime: "today",
+      periodTime: "7days",
 
       affairs: [
         {
@@ -305,7 +305,7 @@ export default {
 <style scoped>
 .chart {
   width: 100%;
-  height: 250px;
+  height: 320px;
 }
 .chart2 {
   width: 100%;

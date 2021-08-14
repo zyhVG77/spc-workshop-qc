@@ -224,7 +224,7 @@ def submitPutInForm(user:user_account_info=None,**kwargs):
     for parameter in parameters:
         while(parameter):
             parameter,cell = _storeIntoCell(parameter,cell)
-            if(cell):
+            if not cell:
                 cell = next(it)
     return {'status':'success'}
 
@@ -300,7 +300,7 @@ def submitTakeoutForm(user:user_account_info=None, **kwargs):
     for parameter in parameters:
         while(parameter):
             parameter,cell = _getFromCell(parameter,cell)
-            if(cell):
+            if not cell:
                 try:
                     cell = next(it)
                 except:
@@ -325,7 +325,8 @@ def getWarehouseBasicInfo(user:user_account_info=None,**kwargs):
             'deliverAmount': 10,
             'deliverMoney': 10,
         },
-        'storeDeliverGraphOpiton': generateMainBoardHeatMap([[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)]),
+        'storeDeliverGraphOpiton': generateMainBoardHeatMap([[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)],
+                                                            [[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)]),
         'occupationStateGraphOption': generateMainBoardSunburstMap(
             [
                 {
@@ -358,13 +359,13 @@ def getWarehouseAffairs(user:user_account_info=None,**kwargs):
             {
                 'time':datetime.now(),
                 'type':'store',
-                'detail':'dasfsdaf',
-                'operator':'dafasregtsoruiejgw'
+                'detail':'仓库一 入库 显示适配器 2*2000',
+                'operator':'admin'
             },
             {
                 'time': datetime.now(),
                 'type': 'deliver',
-                'detail': 'dasfsdaf',
+                'detail': '仓库一 出库 螺丝 2*100',
                 'operator': 'dafasregtsoruiejgw'
             }
         ]

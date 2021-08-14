@@ -631,25 +631,35 @@ def generateReportDict(graph):
 def generateWarehouseTreeMap(data:list):
     pass
 
-def generateMainBoardHeatMap(data:list):
+def generateMainBoardHeatMap(dataIn:list,dataOut:list):
     return {
         'tooltip': {
             'position': 'top',
             'formatter': '{c0}'
         },
-        'visualMap': {
+        'visualMap': [{
             'type': 'piecewise',
             'orient': 'horizontal',
             'left': 'center',
+            'seriesIndex':0,
             'top':0,
             'inRange': {
                 'color': ['#C7DBFF','#0F419A']
             }
-        },
-        'calendar': {
+        },{
+            'type': 'piecewise',
+            'orient': 'horizontal',
+            'left': 'center',
+            'seriesIndex': 1,
+            'bottom':0,
+            'inRange': {
+                'color': ['#a6fdc0','#00BB42']
+            }
+        }],
+        'calendar': [{
             'top':60,
-            'bottom':30,
-            'cellSize': 'auto',
+            # 'bottom':80,
+            'cellSize': ['auto',15],
             'range': '2020',
             'itemStyle': {
                 'borderWidth': 0.5
@@ -670,12 +680,36 @@ def generateMainBoardHeatMap(data:list):
                     'fontSize': 30
                 }
             },
-        },
-        'series': {
+        },{
+            # 'top':300,
+            'bottom':30,
+            'cellSize': ['auto',15],
+            'range': '2020',
+            'itemStyle': {
+                'borderWidth': 0.5
+            },
+            'dayLabel': {
+                'nameMap': 'cn'
+            },
+            'monthLabel':{'show':False},
+            'yearLabel': {
+                'margin': 50,
+                'textStyle': {
+                    'fontSize': 30
+                }
+            },
+        }],
+        'series': [{
             'type': 'heatmap',
+            'calendarIndex':0,
             'coordinateSystem': 'calendar',
-            'data': data
-        }
+            'data': dataIn
+        },{
+            'type': 'heatmap',
+            'calendarIndex':1,
+            'coordinateSystem': 'calendar',
+            'data': dataOut
+        },]
     }
 
 def generateMainBoardSunburstMap(data):
