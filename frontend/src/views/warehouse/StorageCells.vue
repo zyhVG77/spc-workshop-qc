@@ -211,7 +211,7 @@ export default {
       WarehouseApi.getStorageCells(
           order,
           0,
-          '',
+          this.current_warehouse_id,
           cells => {
             this.storage_cells = cells
             this.order = order
