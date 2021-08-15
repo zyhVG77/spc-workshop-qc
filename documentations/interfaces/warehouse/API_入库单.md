@@ -1,4 +1,4 @@
-## /PutInForm/submitPutInForm
+## api/warehouse/submitPutInForm
 
 描述：提交入库单
 
@@ -10,12 +10,6 @@
 {
   putInForm:{
 				inputDate:"入库日期",
-				seller:"供货商",
-				qualityChecker:"质检员",
-				holder:"保管员",
-				passer:"经手人",
-				manager:"主管",
-				accountant:"会计",
 				autodistribute:"是否自动分配储位",
 				parameters:[
 				{

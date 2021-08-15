@@ -81,7 +81,7 @@
                   <label for="inputGroupSelect06">储位</label>
                   <select class="custom-select" id="inputGroupSelect07" v-model="measurePlanInfo.storageCellId" @change="loadProduct">
                     <option value="default">选择储位</option>
-                    <option v-for='(w, k) in storageCells' :key='k' :value="w.id">{{ w.name }}</option>
+                    <option v-for='(w, k) in storageCells' :key='k' :value="w.id">{{ w.id }}</option>
                   </select>
                 </div>
               </div>
@@ -191,10 +191,16 @@ export default {
     //   this.parameters = this.products.find((p) => p.id === this.measurePlanInfo.productId).parameters
     // },
     loadStorageCells: function () {
-      this.storageCells = this.warehouseAvailable.find(w => w.id === this.measurePlanInfo.productId).storageCells
+      WarehouseApi.getStorageCells(2,'all',this.measurePlanInfo.warehouseId,d=>this.storageCells=d)
+      // this.storageCells = this.warehouseAvailable.find(w => w.id === this.measurePlanInfo.productId).storageCells
     },
     loadProduct: function () {
-      this.products = this.storageCells.find(s => s.id === this.measurePlanInfo.storageCellId).products
+      WarehouseApi.getAllProducts(
+              products => this.products = products,
+              err => console.log(err),
+              err => console.log(err)
+      )
+      // this.products = this.storageCells.find(s => s.id === this.measurePlanInfo.storageCellId).products
     },
     submitMeasurePlan: function () {
       WarehouseApi.submitMeasurePlan(

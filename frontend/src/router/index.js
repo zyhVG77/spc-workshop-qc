@@ -75,6 +75,19 @@ export const asyncRouterMap = [
         }
       },
       {
+        path: 'UserManage',
+        component: () => import('@/views/workshop/UserManage'),
+        meta: {
+          role: ['admin', 'super_editor',],
+          isSidebarItem: true,
+          subsystem: 'workshop',
+          sidebarInfo: {
+            name: '用户管理',
+            iconClass: 'icon-grid'
+          }
+        }
+      },
+      {
         path: 'analysisReportDetail/:index',
         name: 'ReportDetail',
         component: () => import('@/views/workshop/AnalysisReportDetail'),
@@ -108,6 +121,32 @@ export const asyncRouterMap = [
           sidebarInfo: {
             name: '储位管理',
             iconClass: 'icon-bell'
+          }
+        }
+      },
+      {
+        path: 'PutInForm',
+        component: () => import('@/views/warehouse/PutInForm'),
+        meta: {
+          role: ['admin', 'super_editor', 'viewer'],
+          isSidebarItem: true,
+          subsystem: 'warehouse',
+          sidebarInfo: {
+            name: '填写入库单',
+            iconClass: 'icon-login'
+          }
+        }
+      },
+      {
+        path: 'TakeOutForm',
+        component: () => import('@/views/warehouse/TakeOutForm'),
+        meta: {
+          role: ['admin', 'super_editor', 'viewer'],
+          isSidebarItem: true,
+          subsystem: 'warehouse',
+          sidebarInfo: {
+            name: '填写出库单',
+            iconClass: 'icon-log-out'
           }
         }
       },

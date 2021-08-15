@@ -97,7 +97,6 @@ abnormality_uid = int(abnormality_uid.uid if abnormality_uid else -1) + 1
 
 if DEBUG:
     print('product_uid: ',product_uid)
-    print('uesr_uid: ',user_uid)
     print('par_uid: ',par_uid)
     print('control_plan_uid: ',control_plan_uid)
     print('measure_plan_uid: ',measure_plan_uid)
@@ -106,7 +105,6 @@ if DEBUG:
     print('control_point_uid: ',control_point_uid)
     print('abnormality_uid: ',abnormality_uid)
 
-user_uid = idIter(user_uid)
 product_uid = idIter(product_uid)
 par_uid = idIter(par_uid)
 control_plan_uid = idIter(control_plan_uid)

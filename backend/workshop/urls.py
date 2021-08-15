@@ -39,12 +39,15 @@ workshop_patterns = [
     path('GetControlGraph',GetControlGraph),#todo : modify to this => ,lambda request:myJsonResponse(getControlGraph(request))),
     path('GetAllExceptionReports',lambda request:myJsonResponse(getAllExceptionReports(request))),
     # path('GetReportDetailHtml',lambda request:getDetailReport(request)), # todo: not Json Response
-
     path('GetReportDetailHtml', lambda request:myJsonResponse(getDetailReport(request))),  # todo: not Json Response
 
     path('GetAllWorkshopsInfo',lambda request:myJsonResponse(getAllWorkshopInfo(request))),
     path('SubmitWorkshop',lambda request:myJsonResponse(alterWorkshops(request))),
-    path('DeleteWorkshop',lambda request:myJsonResponse(deleteWorkshop(request)))
+    path('DeleteWorkshop',lambda request:myJsonResponse(deleteWorkshop(request))),
+
+    path('getRelationshipForm',lambda request:myJsonResponse(getRelationshipForm(request))),
+    path('getAllWorkshopsId',lambda request:myJsonResponse(getAllWorkshopsId(request))),
+    path('submitRelationship',lambda request:myJsonResponse(submitRelationship(request)))
 ]
 
 urlpatterns = [

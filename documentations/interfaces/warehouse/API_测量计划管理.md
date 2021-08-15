@@ -19,7 +19,6 @@
     productId: 'id of product', // 产品ID
     warehouseId: 'id of warehouse', // 仓库ID
     storageCellId: 'id of storage cell' // 储位ID
-    parameters: ['id00001', 'id00002', '...'], // 测量属性ID的列表
     description: 'description' // 批注
 }
 ```
@@ -70,12 +69,23 @@
             },
             product: {		// 产品信息，应至少包含产品id和产品名
                 id: '',
-                name: ''
-            },
-            parameters: [{		// 测量参数列表，每个参数应至少包含id和参数名
-                id: '',
-                name: ''
-            }]
+                name: '',
+                parameters: [
+                    {		// 参数列表，每个参数需包括如下控制信息
+                		id: '',
+                		name: '',
+                    	unit: '',	// 单位
+                    	scale: '',	// 小数位数
+                    	graph_type: '',	// 控制图类型
+                    	usl: '',	// 上规格限
+                    	lsl: ''		// 下规格限
+            		},
+                    {
+                        // ...
+                    },
+                    // ...
+                ]
+            }
         },
         {
             // ...

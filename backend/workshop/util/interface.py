@@ -3,7 +3,7 @@ from workshop.util.utils import TEMPLATENAME
 from workshop.util.graphCheck import getGraph, getGraphByTime
 from workshop.util.sheduleMake import addProduct, addParameter, alterProduct, alterParameter, delProduct, alterWorkshop, addWorkshop, delWorkshop
 from workshop.models import *
-from user.util.interface import verify_decorator
+from user.util.interface import verify_decorator,_addUser
 
 
 # ////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ def _getProduct(productInfo: product_info, user=None):
     workshops = []
 
     measurePlanInfos = productInfo.measure_plans.filter(
-        workshop__worker=user) if user else productInfo.measure_plans.all()
+        workshop__workers=user) if user else productInfo.measure_plans.all()
     for measurePlanInfo in measurePlanInfos:
         measurePlan = {'measure_plan_id': measurePlanInfo.uid, 'workshop_name': measurePlanInfo.workshop.name}
         workshops.append(measurePlan)
@@ -54,7 +54,7 @@ def getProducts(user: user_account_info = None, **kwargs):
     if user.role == RoleChoices.ADMIN:
         productInfos = product_info.objects.all()
     else:
-        productInfos = product_info.objects.filter(measure_plans__workshop__worker=user)  # todo: check if right
+        productInfos = product_info.objects.filter(measure_plans__workshop__workers=user)  # todo: check if right
 
     for productInfo in productInfos:
         product = _getProduct(productInfo, None if user.role == RoleChoices.ADMIN else user)
@@ -259,7 +259,7 @@ def getAllExceptionReports(user: user_account_info = None, **kwargs):
         abnormalityInfos = abnormality_info.objects.order_by('if_read', '-uid')
     else:
         # abnormalityInfos = abnormality_info.objects.filter(measure_plan__workshop__worker=user).order_by('-uid')
-        abnormalityInfos = abnormality_info.objects.filter(measure_plan__workshop__worker=user).order_by('if_read', '-uid')
+        abnormalityInfos = abnormality_info.objects.filter(measure_plan__workshop__workers=user).order_by('if_read', '-uid')
 
     for abnormalityInfo in abnormalityInfos:
         abnormalities.append(
@@ -303,3 +303,60 @@ def getDetailReport(user: user_account_info = None, id=None, **kwargs):
         'status': 'success',
         'content': loader.render_to_string(TEMPLATENAME, graph.generateReportDict())
     }
+
+# ////////////////////////////////////////////////////////////
+# 权限管理相关
+# ////////////////////////////////////////////////////////////
+
+@verify_decorator()
+def getRelationshipForm(user:user_account_info=None, userid=None, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    targetUser = user_account_info.objects.get(uid=userid[0])
+    return {
+        'status':'success',
+        'relationshipform':[
+            {
+                'workshopid':workshop.measure_plan.uid,
+                'name':workshop.name
+            } for workshop in targetUser.workshops.all()
+        ]
+    }
+
+@verify_decorator()
+def getAllWorkshopsId(user:user_account_info=None, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    return {
+        'status':'success',
+        'workshopid':[
+            {
+                'id':workshop.measure_plan.uid,
+                'name':workshop.name
+            } for workshop in workshop_info.objects.all()
+        ]
+    }
+
+# todo: 需要更进一步的讨论，关于用户添加
+@verify_decorator()
+def submitRelationship(user:user_account_info=None, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    targetRole = RoleChoices.labels.index(kwargs['checkrole'])
+    if not kwargs['modify']:
+        targetUser = _addUser(kwargs['userid'],role=targetRole)
+        if targetRole == RoleChoices.ADMIN or targetRole == RoleChoices.SUPEREDITOR:
+            return {'status':'success'}
+    else:
+        targetUser = user_account_info.objects.get(uid=kwargs['userid'])
+        if targetRole != RoleChoices.VIEWER:
+            targetUser.role = targetRole
+            targetUser.save()
+            return {'status':'success'}
+
+    for relation in kwargs['relations']:
+        if relation['checked']:
+            targetUser.workshops.add(relation['workshopId'])
+        else:
+            targetUser.workshops.remove(relation['workshopId'])
+    return {'status':'success'}
