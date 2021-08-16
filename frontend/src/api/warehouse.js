@@ -125,10 +125,10 @@ const WarehouseApi = {
     getControlGraph: function (data, success, fail) {
         axios.post("/api/warehouse/getControlGraph", data)
             .then(resp => {
-                if (resp.data.option)
-                    success(resp.data.option)
-                else if (resp.data.html)
-                    success(resp.data.html)
+                if (resp.data.options)
+                    success(resp.data.options)
+                else if (resp.data.content)
+                    success(resp.data.content)
                 else
                     fail()
             })

@@ -107,7 +107,7 @@ export const asyncRouterMap = [
           subsystem: 'warehouse',
           sidebarInfo: {
             name: '仓库看板',
-            iconClass: 'icon-bell'
+            iconClass: 'icon-laptop_windows'
           }
         }
       },
@@ -120,7 +120,7 @@ export const asyncRouterMap = [
           subsystem: 'warehouse',
           sidebarInfo: {
             name: '储位管理',
-            iconClass: 'icon-bell'
+            iconClass: 'icon-layers'
           }
         }
       },
@@ -133,7 +133,7 @@ export const asyncRouterMap = [
           subsystem: 'warehouse',
           sidebarInfo: {
             name: '填写入库单',
-            iconClass: 'icon-login'
+            iconClass: 'icon-check'
           }
         }
       },
@@ -146,7 +146,7 @@ export const asyncRouterMap = [
           subsystem: 'warehouse',
           sidebarInfo: {
             name: '填写出库单',
-            iconClass: 'icon-log-out'
+            iconClass: 'icon-local_shipping'
           }
         }
       },
@@ -160,7 +160,7 @@ export const asyncRouterMap = [
           subsystem: 'warehouse',
           sidebarInfo: {
             name: '零件管理',
-            iconClass: 'icon-plus-circle'
+            iconClass: 'icon-camera1'
           }
         }
       },
@@ -174,38 +174,10 @@ export const asyncRouterMap = [
           subsystem: 'warehouse',
           sidebarInfo: {
             name: '测量计划管理',
-            iconClass: 'icon-plus-circle'
+            iconClass: 'icon-pencil'
           }
         }
-        // Two child pages
-        // Measure plan and control plan
-        // children: [
-        //   {
-        //     path: 'measureSchedule',
-        //     name: 'MeasureSchedule',
-        //     component: () => import('@/views/warehouse/MeasureSchedule')
-        //   },
-        //   {
-        //     path: 'controlSchedule',
-        //     name: 'ControlSchedule',
-        //     component: () => import('@/views/warehouse/ControlSchedule')
-        //   }
-        // ]
       },
-      // {
-      //   path: 'controlSchedule',
-      //   name: 'ControlSchedule',
-      //   component: () => import('@/views/warehouse/ControlSchedule'),
-      //   meta: {
-      //     role: ['admin', 'warehouse_keeper'],
-      //     isSidebarItem: true,
-      //     subsystem: 'warehouse',
-      //     sidebarInfo: {
-      //       name: '控制计划管理',
-      //       iconClass: 'icon-plus-circle'
-      //     }
-      //   }
-      // },
       {
         path: 'controlGraphWarehouse',
         name: 'ControlGraphWarehouse',
@@ -216,7 +188,7 @@ export const asyncRouterMap = [
           subsystem: 'warehouse',
           sidebarInfo: {
             name: '质量控制',
-            iconClass: 'icon-bell'
+            iconClass: 'icon-flash_auto'
           }
         }
       },

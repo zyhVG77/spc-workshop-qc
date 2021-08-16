@@ -5,6 +5,18 @@
         <li class="breadcrumb-item">SPC控制图</li>
       </ol>
     </div>
+    <!-- Modal for the detail information of a cell -->
+    <div :class='["modal", "fade", "bd-example-modal-xl", "show"]' tabindex="-1" role="dialog"
+         :style="current === 0?MODAL_STYLE_WHEN_ACTIVE:MODAL_STYLE_WHEN_HIDE">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">选择测量计划</h5>
+            <button type="button" class="close" @click="closeModal">
+              <span>×</span>
+            </button>
+          </div>
+          <div class="modal-body">
 
     <div class="row gutters" v-show="current === 0">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -14,7 +26,7 @@
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table m-0">
+              <table class="table table-bordered table-danger m-0">
                 <thead>
                 <tr>
                   <th>测量计划编号</th>
@@ -58,45 +70,108 @@
       </div>
     </div>
 
-    <div class="row gutters" v-show="current === 1">
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" @click="back">
-        <div class="ml-2 back-btn">
-          <span class="icon-log-out"></span> 返回
+          </div>
         </div>
       </div>
-      <div class="mb-4"></div>
+      </div>
+      <!-- End of Modal-->
 
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
+    <div class="row gutters">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" @click="back">
+        <div class="ml-2 back-btn">
+          <span class="icon-log-out"></span><span class="font-weight-bolder">选择测量计划</span>
+        </div>
+        <div class="mb-4"></div>
+      </div>
+    </div>
+
+    <div class="row gutters">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="card">
+        <div class="card-body">
+          <p class="font-weight-bold">指定时间段</p>
+          <DateRangePicker :triggered="timeTriggered" @submit-date-range="getControlGraphByDateRange($event)" @back="backToDefault"></DateRangePicker>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="row gutters">
+      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
         <div class="card">
           <div class="card-header">
             <div class="card-title">基本信息</div>
           </div>
           <div class="card-body">
-            <p class="desc">
-              测量计划编号：{{ measurePlanSelected.id }}|
-              仓库名：{{ measurePlanSelected.warehouse.name }}|
-              储位编号：{{ measurePlanSelected.storageCellId }}|
-              产品名：{{ measurePlanSelected.product.name }}
-              属性名：{{ measurePlanSelected.parameterSelected.id }}|
-              单位：{{ measurePlanSelected.parameterSelected.unit }}|
-              小数位数：{{ measurePlanSelected.parameterSelected.scale }}|
-              控制图类型：{{ measurePlanSelected.parameterSelected.graph_type }}|
-              USL：{{ measurePlanSelected.parameterSelected.usl }}|
-              LSL：{{ measurePlanSelected.parameterSelected.lsl }}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
-        <div class="card">
-          <div class="card-body">
-            <p class="card-title">指定时间段</p>
-            <DateRangePicker :triggered="timeTriggered" @submit-date-range="getControlGraphByDateRange($event)" @back="backToDefault"></DateRangePicker>
+            <div class="slimScrollDiv" style="position: relative; width: auto; height: 800px;">
+              <ul class="statistics">
+                <li>
+                  <span class="stat-icon bg-info">
+                    <i class="icon-eye1"></i>
+                  </span>
+                  测量计划编号：{{ measurePlanSelected.id }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-danger">
+                    <i class="icon-thumbs-up1"></i>
+                  </span>
+                  仓库名：{{ measurePlanSelected.warehouse.name }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-warning">
+                    <i class="icon-star2"></i>
+                  </span>
+                  储位编号：{{ measurePlanSelected.storageCellId }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-success">
+                    <i class="icon-shopping-bag1"></i>
+                  </span>
+                  产品名：{{ measurePlanSelected.product.name }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-info">
+                    <i class="icon-check-circle"></i>
+                  </span>
+                  属性名：{{ measurePlanSelected.parameterSelected.id }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-danger">
+                    <i class="icon-clipboard"></i>
+                  </span>
+                  单位：{{ measurePlanSelected.parameterSelected.unit }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-warning">
+                    <i class="icon-eye1"></i>
+                  </span>
+                  小数位数：{{ measurePlanSelected.parameterSelected.scale }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-success">
+                    <i class="icon-thumbs-up1"></i>
+                  </span>
+                  控制图类型：{{ measurePlanSelected.parameterSelected.graph_type }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-info">
+                    <i class="icon-star2"></i>
+                  </span>
+                  USL：{{ measurePlanSelected.parameterSelected.usl }}
+                </li>
+                <li>
+                  <span class="stat-icon bg-danger">
+                    <i class="icon-shopping-bag1"></i>
+                  </span>
+                  LSL：{{ measurePlanSelected.parameterSelected.lsl }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-9">
         <div class="card">
           <div class="card-header">
             <div class="card-title">控制图</div>
@@ -106,8 +181,10 @@
           </div>
         </div>
       </div>
+      </div>
 
-      <!-- Add a button to access abnormality report -->
+    <!-- Add a button to access abnormality report -->
+    <div class="row gutters">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
           <div class="card-body">
@@ -115,9 +192,9 @@
           </div>
         </div>
       </div>
+    </div>
 
     </div>
-  </div>
 </template>
 
 <script>
@@ -187,21 +264,25 @@ export default {
       // E-charts obj
       myChart: null,
       // Page controls
-      current: 0,
+      current: 1,
+      MODAL_STYLE_WHEN_HIDE: "display: none",
+      MODAL_STYLE_WHEN_ACTIVE: "display: block",
     }
   },
   methods: {
+    closeModal() {
+      this.current = 1
+    },
     getControlGraphByDefault(k) {
-      console.log(this.measurePlans, k)
       this.measurePlanSelected = this.measurePlans[k]
       this.measurePlanSelected.parameterSelected =
           this.measurePlanSelected.product.parameters.find(p => p.id === this.measurePlanSelected.parameterSelected.id)
 
       let req = this.requestTemplate
       req.analyze = false
-      this.current = 1
       WarehouseApi.getControlGraph(req,
           option => {
+            this.current = 1
             option && this.myChart.setOption(option, true)
             this.timeTriggered = false
           },
@@ -242,8 +323,10 @@ export default {
     },
     getAbnormalityReport() {
       let req = this.requestTemplate
-      req.start_time = this.timeRange.start
-      req.end_time = this.timeRange.end
+      if (this.timeTriggered) {
+        req.start_time = this.timeRange.start
+        req.end_time = this.timeRange.end
+      }
       req.analyze = true
       WarehouseApi.getControlGraph(req,
           html => {
@@ -257,8 +340,28 @@ export default {
     },
     back() {
       this.current = 0
-      this.measurePlanSelected = {}
-      this.timeRange = null
+      /*
+      this.measurePlanSelected = {
+        id: '',
+        warehouse: {
+          name: '',
+          id: ''
+        },
+        product: {
+          name: ''
+        },
+        parameterSelected: {
+          id: '',
+          unit: '',
+          scale: '',
+          graph_type: '',
+          usl: '',
+          lsl: ''
+        }
+        this.timeRange = null
+        this.myChart.clear()
+      }
+      */
     }
   },
   mounted() {
@@ -270,6 +373,8 @@ export default {
           this.measurePlans.forEach(item => {
             item['parameterSelected'] = Object.assign({}, item.product.parameters[0])
           })
+          // Set default
+          this.getControlGraphByDefault(0)
         },
         err => console.log(err)
     )

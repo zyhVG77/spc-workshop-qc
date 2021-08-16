@@ -19,13 +19,6 @@ module.exports = {
                 changeOrigin: true,
                 secure: false,
                 logLevel: 'debug'
-            },
-            '^/myapi': {
-                target: 'http://localhost:8088',
-                changeOrigin: true,
-                secure:false,
-                pathRewrite: {'^/myapi': '/myapi'},
-                logLevel: 'debug'
             }
         }
     }

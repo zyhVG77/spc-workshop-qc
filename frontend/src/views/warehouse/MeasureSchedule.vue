@@ -34,7 +34,6 @@
                   <th>零件</th>
                   <th>批容量</th>
                   <th>批数</th>
-                  <th>测量属性</th>
                   <th>操作</th>
                 </tr>
                 </thead>
@@ -46,7 +45,6 @@
                   <td>{{ p.product.name }}</td>
                   <td>{{ p.batchSize }}</td>
                   <td>{{ p.batch }}</td>
-                  <td>{{ p.parameters }}</td>
                   <td>
                     <div class="btn-group-sm">
                       <button class="btn btn-danger" @click="deleteMeasurePlan(p.id, k)">删除</button>
