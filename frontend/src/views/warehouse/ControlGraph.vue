@@ -163,63 +163,39 @@ export default {
   data() {
     return {
       // Measure plan infos
-      measurePlans: [{
-        id: 'M#001',
-        warehouse: { id: 'W#001', name: 'Warehouse1' },
-        storageCellId: 'S#001',
-        product: {
-          id: 'P#001',
-          name: 'Product',
-          parameters: [{
-            id: 'Pa#001',
-            name: 'Parameter1'
-          }, {
-            id: 'Pa#002',
-            name: 'Parameter2'
-          }, {
-            id: 'Pa#003',
-            name: 'Parameter3'
-          }],
+      measurePlans: [],
+      measurePlanSelected: {
+        id: '',
+        warehouse: {
+          name: '',
+          id: ''
         },
-        batchSize: 12,
-        batch: 100,
-        parameterSelected: { id: 'Pa#001' }
-      }, {
-        id: 'M#001',
-        warehouse: { id: 'W#001', name: 'Warehouse1' },
-        storageCellId: 'S#001',
         product: {
-          id: 'P#001',
-          name: 'Product',
-          parameters: [{
-            id: 'Pa#001',
-            name: 'Parameter1'
-          }, {
-            id: 'Pa#002',
-            name: 'Parameter2'
-          }, {
-            id: 'Pa#003',
-            name: 'Parameter3'
-          }]
+          name: ''
         },
-        batchSize: 12,
-        batch: 100,
-        parameterSelected: { id: 'Pa#001' }
-      }],
-      measurePlanSelected: {},
+        parameterSelected: {
+          id: '',
+          unit: '',
+          scale: '',
+          graph_type: '',
+          usl: '',
+          lsl: ''
+        }
+      },
       timeRange: null,
       timeTriggered: false,
       // E-charts obj
       myChart: null,
       // Page controls
-      current: 1,
+      current: 0,
     }
   },
   methods: {
     getControlGraphByDefault(k) {
+      console.log(this.measurePlans, k)
       this.measurePlanSelected = this.measurePlans[k]
       this.measurePlanSelected.parameterSelected =
-          this.measurePlanSelected.product.parameters.find(p => p.id = this.measurePlanSelected.parameterSelected.id)
+          this.measurePlanSelected.product.parameters.find(p => p.id === this.measurePlanSelected.parameterSelected.id)
 
       let req = this.requestTemplate
       req.analyze = false
@@ -289,13 +265,13 @@ export default {
     WarehouseApi.getMeasurePlans(
         plans => {
           this.measurePlans = plans
+          // Add extra info
+          this.measurePlans.forEach(item => {
+            item['parameterSelected'] = Object.assign({}, item.product.parameters[0])
+          })
         },
         err => console.log(err)
     )
-    // Add extra info
-    this.measurePlans.forEach(item => {
-      item['parameterSelected'] = item.product.parameters[0]
-    })
     // Initialize e-charts
     const chartDom = document.getElementById('main');
     this.myChart = echarts.init(chartDom);

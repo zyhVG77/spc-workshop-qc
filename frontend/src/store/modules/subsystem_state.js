@@ -12,12 +12,14 @@ const actions = {
     changeSubSys({commit, state}) {
         return new Promise(((resolve, reject) => {
             try {
-                console.log(state.sub_sys)
-                if (state.sub_sys === "workshop")
+                if (state.sub_sys === "workshop") {
                     commit("changeSubSys", "warehouse")
-                else
+                    resolve('warehouse')
+                }
+                else {
                     commit("changeSubSys", "workshop")
-                resolve()
+                    resolve('workshop')
+                }
             }
             catch(e) {
                 reject()

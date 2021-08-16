@@ -64,7 +64,6 @@ const actions = {
             commit('logout')
             try {
                 localStorage.removeItem('token')
-                console.log(localStorage.getItem('token'))
                 delete axios.defaults.headers.common['Authorization']
                 resolve()
             } catch(err) {

@@ -115,9 +115,15 @@ export default {
     },
     changeSubSystem: function () {
       this.$store.dispatch("subsystem_state/changeSubSys")
-          .then(() => {}).catch(() => {})
+          .then(to => {
+            if (to === 'workshop')
+              this.$router.push('/home/controlGraph/0/0')
+            else
+              this.$router.push('/home/kanban')
+          })
+          .catch(() => {})
       // Refresh router-view
-      this.$router.push('/home')
+      // this.$router.push('/home')
     }
   },
   mounted() {
