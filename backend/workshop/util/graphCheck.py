@@ -208,7 +208,7 @@ class Graph():
 
 
 class Xbar_R(Graph):
-    def __init__(self, measure_plan: measure_plan_info, control_plan: control_plan_info, points=None, **kwargs):
+    def __init__(self, measure_plan: measure_plan_info, control_plan: control_plan_info, points, **kwargs):
         super().__init__(measure_plan, control_plan, points, **kwargs)
         self._pointx = None
         self._pointr = None
@@ -725,6 +725,6 @@ def getGraphByTime(measure_plan_id, control_plan_id, start_time, end_time=None):
     measure_plan = measure_plan_info.objects.get(uid=measure_plan_id)
     type = control_plan.get_type_display()
 
-    graph = graphType[type](measure_plan, control_plan, start_time=start_time, end_time=end_time)
+    graph = graphType[type](measure_plan, control_plan, None,start_time=start_time, end_time=end_time)
     graph.getData()
     return graph

@@ -79,7 +79,7 @@ SPC_analyzer = [SPCAnalyzer(1, 1, lambda x: x.position == -1 or x.position == 6,
 
 
 class Graph():
-    def __init__(self, measure_plan: measure_plan_info, control_plan: control_plan_info, points, reverse=True,
+    def __init__(self, measure_plan: measure_plan_info, control_plan: control_plan_info, points=None, reverse=True,
                  **kwargs):
         self._measure_plan = measure_plan
         self._control_plan = control_plan
@@ -700,13 +700,13 @@ graphType = {
     'u': uChart
 }
 
-from workshop.util.EXAMPLE import *
+from warehouse.util.EXAMPLE import *
 
-def getGraph(measure_plan_id, control_plan_id, history_points=None):
-    control_plan = control_plan_info.objects.get(uid=control_plan_id)
+def getGraph(measure_plan_id, parameter_id, history_points=None):
+    control_plan = control_plan_info.objects.get(parameter_id=parameter_id)
     measure_plan = measure_plan_info.objects.get(uid=measure_plan_id)
     if not history_points:
-        history_points = control_point_info.objects.filter(control_plan_id=control_plan_id,
+        history_points = control_point_info.objects.filter(control_plan=control_plan,
                                                            measure_form__measure_plan_id=measure_plan_id).order_by('-uid')[
                          :measure_plan.batch_count]
     type = control_plan.get_type_display()
@@ -720,11 +720,11 @@ def getGraph(measure_plan_id, control_plan_id, history_points=None):
     return graph
 
 
-def getGraphByTime(measure_plan_id, control_plan_id, start_time, end_time=None):
-    control_plan = control_plan_info.objects.get(uid=control_plan_id)
+def getGraphByTime(measure_plan_id, parameter_id, start_time, end_time=None):
+    control_plan = control_plan_info.objects.get(parameter_id=parameter_id)
     measure_plan = measure_plan_info.objects.get(uid=measure_plan_id)
     type = control_plan.get_type_display()
 
-    graph = graphType[type](measure_plan, control_plan, start_time=start_time, end_time=end_time)
+    graph = graphType[type](measure_plan, control_plan, None,start_time=start_time, end_time=end_time)
     graph.getData()
     return graph

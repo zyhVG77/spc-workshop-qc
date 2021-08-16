@@ -153,8 +153,8 @@ export default {
       let temp = {
         measurePlanId: this.measurePlanSelected.id,
         parameterId: this.measurePlanSelected.parameterSelected.id,
-        start_time: '',
-        end_time: '',
+        start_time: null,
+        end_time: null,
         analyze: false
       }
       return Object.assign({}, temp)
@@ -199,6 +199,7 @@ export default {
 
       let req = this.requestTemplate
       req.analyze = false
+      this.current = 1
       WarehouseApi.getControlGraph(req,
           option => {
             option && this.myChart.setOption(option, true)
@@ -241,8 +242,8 @@ export default {
     },
     getAbnormalityReport() {
       let req = this.requestTemplate
-      req.start_time = this.range.start
-      req.end_time = this.range.end
+      req.start_time = this.timeRange.start
+      req.end_time = this.timeRange.end
       req.analyze = true
       WarehouseApi.getControlGraph(req,
           html => {
