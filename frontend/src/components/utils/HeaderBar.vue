@@ -4,10 +4,10 @@
     <div class="header-items" >
 
       <ul class="header-actions">
-        <router-link to="/home/analysisReports">
+        <router-link to="/home/analysisReports" v-if="subsys === 'workshop'">
           <i class="icon-calendar1"></i>
         </router-link>
-        <li class="dropdown d-none d-sm-block">
+        <li class="dropdown d-none d-sm-block" v-if="subsys === 'workshop'">
           <a href="#" id="notifications" data-toggle="dropdown" aria-haspopup="true">
             <i class="icon-bell"></i>
             <span class="count-label"></span>
@@ -65,6 +65,9 @@ export default {
     },
     currentUser: function () {
       return this.$store.getters['user/currentUser']
+    },
+    subsys: function () {
+      return this.$store.getters['subsystem_state/current_sub_sys']
     }
   },
   methods: {

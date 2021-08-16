@@ -132,6 +132,7 @@
         </div>
       </div>
     </div>
+
     <div class="row gutters">
       <div class="col-xl-12 col-lg-12 col-sm-12 col-md-12">
         <div class="card">
@@ -289,6 +290,7 @@ export default {
           {
             type: 'treemap',
             visibleMin: 5,
+            roam: false,
             label: {
                 show: true,
                 formatter: '{b}'
@@ -334,7 +336,7 @@ export default {
             ],
             data: wareHouseData
           }
-        ]
+        ],
       }
       console.log(option)
       graph.setOption(option)
@@ -369,5 +371,6 @@ td:hover {
 .chart {
   width: 100%;
   height: 900px;
+  background-color: #EEF2ED;
 }
 </style>
