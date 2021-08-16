@@ -276,7 +276,7 @@ class measure_plan_info(models.Model):
                            validators=(validators.MinLengthValidator(11),),
                            help_text='测量计划编号'
                            )
-    relationship_info = models.ForeignKey(storage_cell_product_relationship, on_delete=models.CASCADE,
+    relationship_info = models.OneToOneField(storage_cell_product_relationship, on_delete=models.CASCADE,
                                 related_name='measure_plan',
                                 help_text='关联产品储位信息'
                                 )
@@ -294,6 +294,9 @@ class measure_plan_info(models.Model):
     description = models.CharField(max_length=256, null=True,
                                    help_text='批注'
                                    )
+    @property
+    def product(self):
+        return self.relationship_info.product
 
     def __str__(self):
         return self.uid

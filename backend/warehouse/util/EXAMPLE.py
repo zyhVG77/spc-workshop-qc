@@ -16,7 +16,7 @@ class measurePlanUpdator():
         self.operatorId = str(random.randint(0,99999999999)).rjust(WIDTH,'0')
         self.startTime = datetime.now()
         self.parameters = []
-        for par in measurePlanInfo.product.parameters.all():
+        for par in measurePlanInfo.relationship_info.product.parameters.all():
             para = {
                 'scale': int(par.scale),
                 'cl': (par.control_plan.usl+par.control_plan.lsl)/2,

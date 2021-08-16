@@ -510,7 +510,7 @@ def _getMeasureplan(measureplanInfo: measure_plan_info):
             'name':product.name,
             'parameters': [
                 {
-                    'id': par.parameter_id,
+                    'id': par.uid,
                     'name': par.name,
                     'unit': par.unit,
                     'scale': par.scale,
@@ -600,23 +600,23 @@ def deleteMeasurePlan(user: user_account_info = None, id=None, **kwargs):
 @verify_decorator()
 def getControlGraph(user: user_account_info = None, **kwargs):
     if user.role != RoleChoices.ADMIN and measure_plan_info.objects.get(
-            uid=kwargs['measure_plan_id']).workshop.worker != user:
+            uid=kwargs['measurePlanId']).workshop.worker != user:
         raise Exception('unauthorized operation')
 
     start_time = kwargs.pop('start_time')
     end_time = kwargs.pop('end_time')
     if start_time != None and end_time != None:
-        graph = getGraphByTime(kwargs.pop('measure_plan_id'),
-                               kwargs.pop('control_plan_id'),
+        graph = getGraphByTime(kwargs.pop('measurePlanId'),
+                               kwargs.pop('parameterId'),
                                start_time,
                                end_time)
     elif start_time != None:
-        graph = getGraphByTime(kwargs.pop('measure_plan_id'),
-                               kwargs.pop('control_plan_id'),
+        graph = getGraphByTime(kwargs.pop('measurePlanId'),
+                               kwargs.pop('parameterId'),
                                start_time)
     else:
-        graph = getGraph(kwargs.pop('measure_plan_id'),
-                         kwargs.pop('control_plan_id'))
+        graph = getGraph(kwargs.pop('measurePlanId'),
+                         kwargs.pop('parameterId'))
 
     if kwargs.pop('analyze'):
         # return render(kwargs['request'], TEMPLATENAME, graph.generateReportDict())

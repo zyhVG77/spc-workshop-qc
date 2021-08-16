@@ -56,7 +56,7 @@ def uploadData(form):
         if measure_plan.sample_size is not None and sample_size != measure_plan.sample_size:
             raise Exception('sample size unqualified')
 
-        pars = measure_plan.product.parameters.order_by('parameter_id')
+        pars = measure_plan.relationship_info.product.parameters.order_by('parameter_id')
         measure_form = measure_form_info(next(measure_form_uid), measure_form_id,
                                          measure_plan_id, sample_size, start_time, end_time, operator_id)
         measure_form.save()

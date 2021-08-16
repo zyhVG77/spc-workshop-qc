@@ -45,7 +45,7 @@ warehouse_patterns = [
     path('GetAllProducts',lambda request:myJsonResponse(getProducts(request))),
     path('SubmitProduct',lambda request:myJsonResponse(alterProducts(request))),
     path('DeleteProduct',lambda request:myJsonResponse(deleteProduct(request))),
-    path('GetControlGraph',GetControlGraph),#todo : modify to this => ,lambda request:myJsonResponse(getControlGraph(request))),
+    path('getControlGraph',GetControlGraph),#todo : modify to this => ,lambda request:myJsonResponse(getControlGraph(request))),
     path('GetAllExceptionReports',lambda request:myJsonResponse(getAllExceptionReports(request))),
     # path('GetReportDetailHtml',lambda request:getDetailReport(request)), # todo: not Json Response
 

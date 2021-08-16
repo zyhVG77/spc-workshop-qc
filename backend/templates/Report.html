@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.0.2/dist/echarts.min.js"></script>
+</head>
+<style>
+    #wrap {
+        width: 80%;
+        display: flex;
+        justify-content: space-between;
+        margin:auto;
+    }
+    #div2{
+        width: 80%;
+        margin: auto;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    table, table tr td {
+        border: 1px solid;
+    }
+
+    table tr td {
+        padding: 5px 10px;
+    }
+</style>
+
+<body>
+
+<h1 align="center">过程能力分析报告</h1>
+
+<p>&nbsp;</p>
+
+<div id="wrap">
+
+    <table width="35%">
+        <tbody>
+        <tr>
+            <td align="right" width="40%"><strong>产品编号：</strong></td>
+            <td align="center">{{ product_id }}</td>
+        </tr>
+        <tr>
+            <td align="right" width="40%"><strong>产品名称：</strong></td>
+            <td align="center">{{ product_name }}</td>
+        </tr>
+        <tr>
+            <td align="right" width="40%"><strong>产品型号：</strong></td>
+            <td align="center">{{ product_type }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table width="25%">
+        <tbody>
+        <tr>
+            <td align="right" width="60%"><strong>参数编号：</strong></td>
+            <td align="center">{{ parameter_id }}</td>
+        </tr>
+        <tr>
+            <td align="right" width="60%"><strong>参数名称：</strong></td>
+            <td align="center">{{ parameter_name }}</td>
+        </tr>
+        <tr>
+            <td align="right" width="60%"><strong>数值单位：</strong></td>
+            <td align="center">{{ parameter_unit }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table width="35%">
+        <tbody>
+        <tr>
+            <td align="right" width="50%"><strong>测量计划编号：</strong></td>
+            <td align="center">{{ measure_plan_id }}</td>
+        </tr>
+        <tr>
+            <td align="right" width="50%"><strong>报告生成日期：</strong></td>
+            <td align="center">{{ date }}</td>
+        </tr>
+        <tr>
+            <td align="right" width="50%"><strong>报告生成时间：</strong></td>
+            <td align="center">{{ time }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<p>&nbsp;</p>
+
+<table align="center" width="80%">
+    <tbody>
+    {% for lines in control_point_table %}
+        <tr>
+            <td align="center" colspan={{ chart_colspan }}><strong>{{ lines.title }}</strong></td>
+        </tr>
+        <tr>
+        {% for col in lines.head %}
+            <td align="center"><strong>{{ col }}</strong></td>
+        {% endfor %}
+        </tr>
+        {% for line in lines.data %}
+            <tr>
+            {% for col in line %}
+                <td align="center">{{ col }}</td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<table align="center" width="80%">
+    <tbody>
+    {% for lines in original_point_table %}
+        <tr>
+            <td align="center" colspan={{ chart_colspan }}><strong>{{ lines.title }}</strong></td>
+        </tr>
+        <tr>
+        {% for col in lines.head %}
+            <td align="center"><strong>{{ col }}</strong></td>
+        {% endfor %}
+        </tr>
+        {% for line in lines.data %}
+            <tr>
+            {% for col in line %}
+                <td align="center">{{ col }}</td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    {% endfor %}
+    </tbody>
+</table>
+
+
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="chart" style="width: 100%;height:800px;"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('chart'));
+
+    // 指定图表的配置项和数据
+    var option = {{ option | safe }};
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
+<div id="div2">
+    <table width="30%">
+        <tbody>
+        <tr>
+            <td align="right" width="50%"><strong>异常点个数：</strong></td>
+            <td align="center">{{ abnormailty_count }}</td>
+        </tr>
+        {% if has_ppk %}
+        <tr>
+            <td align="right" width="50%"><strong>PPK：</strong></td>
+            <td align="center">{{ ppk }}</td>
+        </tr>
+        <tr>
+            <td align="right" width="50%"><strong>CPK：</strong></td>
+            <td align="center">{{ cpk }}</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% if has_ppk %}
+<p>&nbsp;</p>
+{% endif %}
+
+
+<table align="center" width="80%">
+    <thead>
+    <tr>
+        <td align="center" colspan="2"><strong>异常信息表</strong></td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td align="center"><strong>异常信息</strong></td>
+        <td align="center"><strong>备注</strong></td>
+    </tr>
+    {% for abnormailty in abnormalities %}
+        <tr>
+            <td align="center">{{ abnormailty.0 }}</td>
+            <td align="center">{{ abnormailty.1 }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p>&nbsp;</p>
+
+</body>
+</html>
