@@ -85,7 +85,7 @@ def _addMeasurePlan(product_id, cell_id, sample_size=5, batch_count=25,descripti
         try:
             relationship_info = storage_cell_product_relationship.objects.get(product__uid=product_id,storage_cell__uid=cell_id)
         except:
-            relationship_info = storage_cell_product_relationship(next(storage_cell_product_relationship_uid),cell_id,product_id,0,datetime.now(),description)
+            relationship_info = storage_cell_product_relationship(next(storage_cell_product_relationship_uid),cell_id,product_id,0,datetime.now())
 
         measure_plan = measure_plan_info(next(measure_plan_uid), relationship_info.uid, sample_size, None, batch_count)
         measure_plan.save()

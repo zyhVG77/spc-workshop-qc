@@ -177,7 +177,7 @@
 
 <script>
 import PutInFormApi from "@/api/putinform"
-import WarehouseApi from "../../api/warehouse";
+import WarehouseApi from "@/api/warehouse";
 export default {
 	name: "PutInForm",
     data: function() {

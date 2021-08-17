@@ -1,4 +1,4 @@
-from django.db.models import F
+from django.db.models import F, Sum
 from django.template import loader
 
 from warehouse.util.charts import generateMainBoardHeatMap, generateMainBoardSunburstMap
@@ -162,7 +162,13 @@ def _storeIntoCell(parameter,cell:storage_cell_info):
             board.occupation = main_board.objects.filter(warehouse=warehouse).order_by('-date')[0].occupation
         except: # todo: check if it works
             board.occupation = 0
-        board.save()
+    board.store_batches += 1
+    board.store_amount += parameter['quantity']
+    board.occupation += parameter['quantity']/board.warehouse.capacity
+    if 'price' in parameter:
+        board.store_money += int(parameter['price'])*parameter['quantity']
+    board.save()
+
     if parameter['quantity']>capacity:
         shift = cell.free
         parameter['quantity'] -= shift
@@ -194,7 +200,7 @@ def submitPutInForm(user:user_account_info=None,**kwargs):
     parameters = kwargs.pop('parameters')
     total = sum([int(par['quantity']) for par in parameters])
     if kwargs.pop('autodistribute'):
-        if user.role == RoleChoices.ADMIN:
+        if user.role_warehouse == RoleChoices.ADMIN:
             capacity = warehouse_info.objects.aggregate(capacity=models.Sum(F('capacity')-F('occupy')))['capacity']
             cells = storage_cell_info.objects.all()
         else:
@@ -239,7 +245,12 @@ def _getFromCell(parameter,cell:storage_cell_info):
     except:
         board = main_board(date=datetime.today(), warehouse_id=warehouse.uid)
         board.occupation = main_board.objects.filter(warehouse=warehouse).order_by('-date')[0].occupation
-        board.save()
+    board.deliver_batches += 1
+    board.deliver_amount += parameter['quantity']
+    board.occupation -= parameter['quantity'] / board.warehouse.capacity
+    if 'price' in parameter:
+        board.deliver_money += int(parameter['price']) * parameter['quantity']
+    board.save()
     if parameter['quantity']>relationship.occupy:
         shift = relationship.occupy
         parameter['quantity'] -= shift
@@ -270,7 +281,7 @@ def submitTakeoutForm(user:user_account_info=None, **kwargs):
     parameters = kwargs.pop('parameters')
     total = sum([int(par['quantity']) for par in parameters])
     if kwargs.pop('autodistribute'):
-        if user.role == RoleChoices.ADMIN:
+        if user.role_warehouse == RoleChoices.ADMIN:
             # capacity = warehouse_info.objects.aggregate(capcity=models.Sum('free'))['capacity']
             cells = storage_cell_info.objects.all()
         else:
@@ -314,19 +325,31 @@ def submitTakeoutForm(user:user_account_info=None, **kwargs):
 # GET METHOD
 @verify_decorator()
 def getWarehouseBasicInfo(user:user_account_info=None,**kwargs):
+    if user.role_warehouse == RoleChoices.ADMIN:
+        boards = main_board.objects.filter(date__gt=datetime(datetime.now().year,1,1))
+    else:
+        boards = main_board.objects.filter(warehouse__users=user,date__gt=datetime(datetime.now().year,1,1))
+    basicInfo = boards.aggregate(storeBatches=Sum('store_batches'),
+                                    storeAmount=Sum('store_amount'),
+                                    storeMoney=Sum('store_money'),
+                                    deliverBatches=Sum('deliver_batches'),
+                                    deliverAmount=Sum('deliver_amount'),
+                                    deliverMoney=Sum('deliver_money'))
+    deliverInfo = boards.values('date').annotate(store=Sum('store_amount'),deliver=Sum('deliver_amount'))
     import random
     return {
         'status': 'success',
         'basicInfo': {
-            'storeBatches': 10,
-            'storeAmount': 10,
-            'storeMoney': 10,
-            'deliverBatches': 10,
-            'deliverAmount': 10,
-            'deliverMoney': 10,
+            'storeBatches': basicInfo['storeBatches'],
+            'storeAmount': basicInfo['storeAmount'],
+            'storeMoney': basicInfo['storeMoney'],
+            'deliverBatches': basicInfo['deliverBatches'],
+            'deliverAmount': basicInfo['deliverAmount'],
+            'deliverMoney': basicInfo['deliverMoney'],
         },
-        'storeDeliverGraphOpiton': generateMainBoardHeatMap([[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)],
-                                                            [[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)]),
+        'storeDeliverGraphOpiton': generateMainBoardHeatMap([[day['date'],day['store']] for day in deliverInfo],#[[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)],
+                                                            [[day['date'],day['deliver']] for day in deliverInfo]#[[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)]
+                                                            ),
         'occupationStateGraphOption': generateMainBoardSunburstMap(
             [
                 {
@@ -337,15 +360,6 @@ def getWarehouseBasicInfo(user:user_account_info=None,**kwargs):
                         {'name': '占用' if warehouse.occupy != 0 else "", 'value': warehouse.occupy}
                     ]
                 } for warehouse in warehouse_info.objects.all()
-            ] + [
-                {
-                    'name':'仓库三（test）',
-                    'value':9000,
-                    'children':[
-                        {'name':'空闲','value':6000},
-                        {'name':'占用','value':3000}
-                    ]
-                }
             ]
         )
     }
@@ -353,22 +367,25 @@ def getWarehouseBasicInfo(user:user_account_info=None,**kwargs):
 # GET METHOD
 @verify_decorator()
 def getWarehouseAffairs(user:user_account_info=None,**kwargs):
+    affairsIn = entry_product_relationship.objects.order_by('-uid')[:5]
+    affairsOut = shipment_product_relationship.objects.order_by('-uid')[:5]
+    all = [
+        {
+            'time':affair.entry.entry_time,
+            'type':'store',
+            'detail':'入库：'+affair.product.name+' 数量：'+str(affair.number)
+        } for affair in affairsIn
+    ]+[
+        {
+            'time': affair.entry.shipping_time,
+            'type': 'deliver',
+            'detail': '出库：' + affair.product.name + ' 数量：' + str(affair.number)
+        } for affair in affairsOut
+    ]
+    all.sort(key=lambda x:x['time'],reverse=True)
     return {
         'status':'success',
-        'affairs':[
-            {
-                'time':datetime.now(),
-                'type':'store',
-                'detail':'仓库一 入库 显示适配器 2*2000',
-                'operator':'admin'
-            },
-            {
-                'time': datetime.now(),
-                'type': 'deliver',
-                'detail': '仓库一 出库 螺丝 2*100',
-                'operator': 'dafasregtsoruiejgw'
-            }
-        ]
+        'affairs':all
     }
 
 # ////////////////////////////////////////////////////////////
@@ -418,7 +435,7 @@ def getProducts(user: user_account_info = None, **kwargs):
 
     productInfos = product_info.objects.all()
     for productInfo in productInfos:
-        product = _getProduct(productInfo, None if user.role == RoleChoices.ADMIN else user)
+        product = _getProduct(productInfo, None if user.role_warehouse == RoleChoices.ADMIN else user)
         products.append(product)
 
     response = {
@@ -430,7 +447,7 @@ def getProducts(user: user_account_info = None, **kwargs):
 
 @verify_decorator()
 def alterProducts(user: user_account_info = None, product=None, modify=None, **kwargs):
-    if user.role != RoleChoices.ADMIN:
+    if user.role_warehouse != RoleChoices.ADMIN:
         raise Exception('unauthorized operation')
 
     productId = None
@@ -482,7 +499,7 @@ def alterProducts(user: user_account_info = None, product=None, modify=None, **k
 # GET METHOD
 @verify_decorator()
 def deleteProduct(user: user_account_info = None, id=None, **kwargs):
-    if user.role != RoleChoices.ADMIN:
+    if user.role_warehouse != RoleChoices.ADMIN:
         raise Exception('unauthorized operation')
 
     delProduct(id[0])  # args from GET is always a list
@@ -527,7 +544,7 @@ def _getMeasureplan(measureplanInfo: measure_plan_info):
 @verify_decorator()
 def getMeasurePlans(user: user_account_info = None, **kwargs):
     measureplans = []
-    if user.role == RoleChoices.ADMIN:
+    if user.role_warehouse == RoleChoices.ADMIN:
         measurePlans = measure_plan_info.objects.all()
     else:
         measurePlans = measure_plan_info.objects.filter(relationship_info__storage_cell__warehouse__in=user.warehouses.all())
@@ -558,35 +575,11 @@ def submitMeasurePlan(user: user_account_info = None, measurePlan=None, **kwargs
 
     return {'status':'success'}
 
-    # if modify:
-    #     try:
-    #         workshopId = workshop.pop('id')
-    #         workshopInfo = alterWorkshop(workshopId, **workshop)
-    #     except Exception as e:
-    #         if not workshopInfo:
-    #             workshopInfo = workshop_info.objects.get(measure_plan__uid=workshopId)
-    #         response = {
-    #             'status': 'fail',
-    #             'error_message': str(e),
-    #             'workshop': _getWorkshop(workshopInfo)
-    #         }
-    #         return response
-    #
-    # else:
-    #     workshopInfo = addWorkshop(**workshop)
-    #
-    # response = {
-    #     'status': 'success',
-    #     'workshop': _getWorkshop(workshopInfo)
-    # }
-    #
-    # return response
-
 # GET METHOD
 @verify_decorator()
 def deleteMeasurePlan(user: user_account_info = None, id=None, **kwargs):
     measure_plan = measure_plan_info.objects.get(uid=id) # todo: may cause secure problems
-    if user.role != RoleChoices.ADMIN or not warehouse_info.objects.get(uid=measure_plan.relationship_info.storage_cell.warehouse.uid).users.filter(
+    if user.role_warehouse != RoleChoices.ADMIN or not warehouse_info.objects.get(uid=measure_plan.relationship_info.storage_cell.warehouse.uid).users.filter(
             uid=user.uid).exists():
         raise Exception('unauthorized operation')
 
@@ -599,7 +592,7 @@ def deleteMeasurePlan(user: user_account_info = None, id=None, **kwargs):
 
 @verify_decorator()
 def getControlGraph(user: user_account_info = None, **kwargs):
-    if user.role != RoleChoices.ADMIN and measure_plan_info.objects.get(
+    if user.role_warehouse != RoleChoices.ADMIN and measure_plan_info.objects.get(
             uid=kwargs['measurePlanId']).workshop.worker != user:
         raise Exception('unauthorized operation')
 
@@ -640,7 +633,7 @@ def getControlGraph(user: user_account_info = None, **kwargs):
 @verify_decorator()
 def getAllExceptionReports(user: user_account_info = None, **kwargs):
     abnormalities = []
-    if user.role == RoleChoices.ADMIN:
+    if user.role_warehouse == RoleChoices.ADMIN:
         # abnormalityInfos = abnormality_info.objects.order_by('-uid')
         abnormalityInfos = abnormality_info.objects.order_by('if_read', '-uid')
     else:

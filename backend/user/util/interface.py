@@ -196,7 +196,7 @@ def modifyPassword(user:user_account_info=None,rawPwdHash=None,newPwdHash=None,*
 
 @verify_decorator()
 def getUserId(user:user_account_info=None, **kwargs):
-    if user.role != RoleChoices.ADMIN:
+    if user.role != RoleChoices.ADMIN: # or user.role_warehouse != RoleChoices.ADMIN
         raise Exception('unauthorized operation')
     return {
         'status':'success',

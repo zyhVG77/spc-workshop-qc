@@ -638,6 +638,8 @@ def generateMainBoardHeatMap(dataIn:list,dataOut:list):
             'formatter': '{c0}'
         },
         'visualMap': [{
+            'min':min(dataIn,key=lambda x:x[1])[1],
+            'max': max(dataIn, key=lambda x: x[1])[1],
             'type': 'piecewise',
             'orient': 'horizontal',
             'left': 'center',
@@ -647,6 +649,8 @@ def generateMainBoardHeatMap(dataIn:list,dataOut:list):
                 'color': ['#C7DBFF','#0F419A']
             }
         },{
+            'min': min(dataOut, key=lambda x: x[1])[1],
+            'max': max(dataOut, key=lambda x: x[1])[1],
             'type': 'piecewise',
             'orient': 'horizontal',
             'left': 'center',
@@ -660,7 +664,7 @@ def generateMainBoardHeatMap(dataIn:list,dataOut:list):
             'top':60,
             # 'bottom':80,
             'cellSize': ['auto',15],
-            'range': '2020',
+            'range': datetime.now().year,
             'itemStyle': {
                 'borderWidth': 0.5
             },
@@ -684,7 +688,7 @@ def generateMainBoardHeatMap(dataIn:list,dataOut:list):
             # 'top':300,
             'bottom':30,
             'cellSize': ['auto',15],
-            'range': '2020',
+            'range': datetime.now().year,
             'itemStyle': {
                 'borderWidth': 0.5
             },

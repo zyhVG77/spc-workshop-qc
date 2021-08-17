@@ -716,9 +716,6 @@ def getGraph(measure_plan_id, parameter_id, history_points=None):
     graph = graphType[type](measure_plan, control_plan, history_points)
     graph.getData()
 
-    # todo: disable this
-    # uploadData(measurePlanUpdator(measure_plan).generateForm())
-
     return graph
 
 
