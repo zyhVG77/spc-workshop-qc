@@ -42,6 +42,26 @@ const WarehouseApi = {
             })
             .catch(e => console.log(e))
     },
+    getTodayStatistics: function (success, error) {
+        axios.get('/api/warehouse/GetTodayStatistics')
+            .then(resp => {
+                if (resp.data.status === 'success')
+                    success(resp.data.statistics)
+                else
+                    error(resp.data.errorMsg)
+            })
+            .catch(e => error(e))
+    },
+    getFullYearStatistics: function (success, error) {
+        axios.get('/api/warehouse/GetFullYearStatistics')
+            .then(resp => {
+                if (resp.data.status === 'success')
+                    success(resp.data.statistics)
+                else
+                    error(resp.data.errorMsg)
+            })
+            .catch(e => error(e))
+    },
     getWarehouseAffairs: function (success) {
         axios.get('/api/warehouse/GetWarehouseAffairs')
             .then(resp => {
