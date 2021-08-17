@@ -199,7 +199,6 @@ export default {
       TAG_ACTIVE: ["btn", "active"],
 
       basicInfo: {
-        warehouseId: '',
         storeBatches: 0,
         storeAmount: 0,
         deliverBatches: 0,
@@ -332,7 +331,7 @@ export default {
             }
           },
           title: {
-            subtext: '仓库编号' + this.basicInfo.warehouseId
+            subtext: '数据来自本系统'
           },
           tooltip: {},
           legend: {
@@ -475,19 +474,27 @@ export default {
     // Fetch notifications of the warehouse
     WarehouseApi.getWarehouseAffairs(affairs => this.affairs = affairs)
     // Fetch today's statistics
-    // let tmp = [['产品一', 10], ['产品二', 20], ['产品三', 30], ['产品四', 40], ['产品五', 40]]
     WarehouseApi.getTodayStatistics(
         statistics => {
           this.todayPutInGraph.setOption(this.dataToOptionForToday(statistics.putInData, 0))
           this.todayShippingGraph.setOption(this.dataToOptionForToday(statistics.shippingData, 1))
         },
-        err => console.log(err))
-    // this.todayPutInGraph.setOption(this.dataToOptionForToday(tmp, 0))
-    // tmp = [['产品一', 20], ['产品二', 50], ['产品三', 70], ['产品四', 70], ['产品五', 70]]
-    // this.todayShippingGraph.setOption(this.dataToOptionForToday(tmp, 1))
+        err => console.log(err)
+    )
+    // Fetch full year statistics
+    WarehouseApi.getFullYearStatistics(
+        statistics => {
+          this.dynamicLineGraph.setOption(this.dataToOptionForDynamic(statistics), true)
+        },
+        err => console.log(err)
+    )
 
-    // Fetch dynamic statistics
-    /*
+    /* Unused mocking data
+
+    let tmp = [['产品一', 10], ['产品二', 20], ['产品三', 30], ['产品四', 40], ['产品五', 40]]
+    this.todayPutInGraph.setOption(this.dataToOptionForToday(tmp, 0))
+    tmp = [['产品一', 20], ['产品二', 50], ['产品三', 70], ['产品四', 70], ['产品五', 70]]
+    this.todayShippingGraph.setOption(this.dataToOptionForToday(tmp, 1))
     const d = {
       putInData: {},
       shippingData: {}
@@ -507,13 +514,9 @@ export default {
         arr1.push(Math.round(Math.random() * 3000))
       d['shippingData'][m] = arr1
     })
+    this.dynamicLineGraph.setOption(this.dataToOptionForDynamic(d), true)
+
     */
-    WarehouseApi.getFullYearStatistics(
-        statistics => {
-          this.dynamicLineGraph.setOption(this.dataToOptionForDynamic(statistics), true)
-        },
-        err => console.log(err))
-    // this.dynamicLineGraph.setOption(this.dataToOptionForDynamic(d), true)
   }
 }
 </script>
