@@ -705,8 +705,8 @@ from warehouse.util.EXAMPLE import *
 def getGraph(measure_plan_id, parameter_id, history_points=None):
     control_plan = control_plan_info.objects.get(parameter_id=parameter_id)
     measure_plan = measure_plan_info.objects.get(uid=measure_plan_id)
-    # todo: disable this
-    uploadData(measurePlanUpdator(measure_plan).generateForm())
+    # Enable when in lack of data
+    # uploadData(measurePlanUpdator(measure_plan).generateForm())
     if not history_points:
         history_points = control_point_info.objects.filter(control_plan=control_plan,
                                                            measure_form__measure_plan_id=measure_plan_id).order_by('-uid')[
