@@ -11,7 +11,9 @@ from warehouse.models import *
 from user.util.interface import verify_decorator
 from datetime import datetime, date, timedelta
 
-
+DEMONSTRATION = False
+if DEMONSTRATION:
+    import random
 # warehouse = warehouse_info(next(warehouse_uid),'仓库一',capacity=6000,occupy=0)
 # warehouse.save()
 # for i in range(300):
@@ -336,7 +338,6 @@ def getWarehouseBasicInfo(user:user_account_info=None,**kwargs):
                                     deliverAmount=Sum('deliver_amount'),
                                     deliverMoney=Sum('deliver_money'))
     deliverInfo = boards.values('date').annotate(store=Sum('store_amount'),deliver=Sum('deliver_amount'))
-    import random
     return {
         'status': 'success',
         'basicInfo': {
@@ -347,8 +348,10 @@ def getWarehouseBasicInfo(user:user_account_info=None,**kwargs):
             'deliverAmount': basicInfo['deliverAmount'],
             'deliverMoney': basicInfo['deliverMoney'],
         },
-        'storeDeliverGraphOpiton': generateMainBoardHeatMap([[day['date'],day['store']] for day in deliverInfo],#[[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)],
-                                                            [[day['date'],day['deliver']] for day in deliverInfo]#[[(date(2020, 1, 1) + timedelta(d)).strftime("%Y-%m-%d"), random.randint(1, 100)] for d in range(365)]
+        'storeDeliverGraphOpiton': generateMainBoardHeatMap([[day['date'],day['store']] for day in deliverInfo],
+                                                            [[day['date'],day['deliver']] for day in deliverInfo]) if not DEMONSTRATION else
+                                    generateMainBoardHeatMap([[datetime.now()-timedelta(delta),max(round(random.normalvariate(2000,500),0),0)] for delta in range(365)],
+                                                             [[datetime.now()-timedelta(delta),max(round(random.normalvariate(1500,500),0),0)] for delta in range(365)]
                                                             ),
         'occupationStateGraphOption': generateMainBoardSunburstMap(
             [
@@ -386,6 +389,67 @@ def getWarehouseAffairs(user:user_account_info=None,**kwargs):
     return {
         'status':'success',
         'affairs':all
+    }
+
+@verify_decorator()
+def getTodayStatistics(user:user_account_info=None,**kwargs):
+    entry_infos = entry_info.objects.filter(entry_time__gte=date.today())
+    ship_infos = shipment_info.objects.filter(shipping_time__gte=date.today())
+    putInData = {}
+    shippingData = {}
+    for entry in entry_infos:
+        for product in entry.products.all():
+            name = product.product.name
+            if name in putInData:
+                putInData[name] += product.number
+            else:
+                putInData[name] = product.number
+    for shipping in ship_infos:
+        for product in shipping.products.all():
+            name = product.product.name
+            if name in shippingData:
+                shippingData[name] += product.number
+            else:
+                shippingData[name] = product.number
+    return {
+        'status':'success',
+        'statistics':{
+            'putInData':[[k,v] for k,v in putInData.items()],
+            'shippingData':[[k,v] for k,v in shippingData.items()]
+        }
+    }
+
+@verify_decorator()
+def getFullYearStatistics(user:user_account_info=None,**kwargs):
+    if user.role_warehouse == RoleChoices.ADMIN:
+        boards = main_board.objects.filter(date__gt=datetime(datetime.now().year-1,datetime.now().month,1),date__lt=datetime(datetime.now().year,datetime.now().month,1))
+    else:
+        boards = main_board.objects.filter(warehouse__users=user, date__gt=datetime(datetime.now().year-1, datetime.now().month, 1),date__lt=datetime(datetime.now().year,datetime.now().month,1))
+    groups = boards.values('date').annotate(store=Sum('store_amount'),deliver=Sum('deliver_amount'))
+    putInData = {
+        i:[
+          0 if not DEMONSTRATION else max(round(random.normalvariate(200,100),0),0) for i in range(31 if i in (1,3,5,7,8,10,12) else 28 if i==2 else 30)
+        ] for i in range(1,13)
+    }
+    shippingData = {
+        i:[
+          0 if not DEMONSTRATION else max(round(random.normalvariate(150,100),0),0) for i in range(31 if i in (1,3,5,7,8,10,12) else 28 if i==2 else 30)
+        ] for i in range(1,13)
+    }
+    for day in groups:
+        date = day['date']
+        try:
+            putInData[date.month][date.day-1] = day['store']
+            shippingData[date.month][date.day-1] = day['deliver']
+        except:
+            putInData[date.month].append(day['store'])
+            shippingData[date.month].append(day['deliver'])
+    return {
+        'status':'success',
+        'statistics':{
+            'putInData':putInData,
+            'shippingData':shippingData
+        }
     }
 
 # ////////////////////////////////////////////////////////////

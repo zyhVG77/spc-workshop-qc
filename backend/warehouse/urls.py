@@ -55,10 +55,9 @@ warehouse_patterns = [
     path('submitTakeOutForm',lambda request:myJsonResponse(submitTakeoutForm(request))),
 
     path('GetWarehouseBasicInfo',lambda request:myJsonResponse(getWarehouseBasicInfo(request))),
-    path('GetWarehouseAffairs',lambda request:myJsonResponse(getWarehouseAffairs(request)))
-    # path('GetAllWorkshopsInfo',lambda request:myJsonResponse(getAllWorkshopInfo(request))),
-    # path('SubmitWorkshop',lambda request:myJsonResponse(alterWorkshops(request))),
-    # path('DeleteWorkshop',lambda request:myJsonResponse(deleteWorkshop(request)))
+    path('GetWarehouseAffairs',lambda request:myJsonResponse(getWarehouseAffairs(request))),
+    path('GetTodayStatistics',lambda request:myJsonResponse(getTodayStatistics(request))),
+    path('GetFullYearStatistics',lambda request:myJsonResponse(getFullYearStatistics(request)))
 ]
 
 urlpatterns = [
