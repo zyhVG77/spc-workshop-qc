@@ -6,7 +6,7 @@
           <div class="login-screen">
             <div class="login-box">
               <a href="#" class="login-logo">登录</a>
-              <h5>欢迎来到汽车零部件质量控制平台，<br />请登录您的账户</h5>
+              <h5>欢迎来到车间生产监管平台，<br />请登录您的账户</h5>
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="账号" v-model="username"/>
               </div>

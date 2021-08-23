@@ -16,7 +16,7 @@ DATA_SLOT_NUMBERING_START = 0
 
 class UaServer:
     def __init__(self):
-        self.server_name = 'UA Server'
+        self.server_name = 'UA OPCUA_Server'
         self.endpoint = 'opc.tcp://0.0.0.0:4840/'
         self.uri = 'https://github.com/zyhVG77/SpcApp.git'
         self.server = None

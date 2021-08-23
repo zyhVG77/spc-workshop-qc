@@ -31,18 +31,15 @@ def verify_decorator(verify: bool = True):
 
                 elif request.method == 'GET':
                     kwargs.update(request.GET)
-                # todo: for return render in someplaces
                 kwargs['request'] = request
                 if verify:
                     kwargs['user'] = _verifyToken(request.headers['Authentication'])
                 return func(**kwargs)
             except Exception as e:
-                # todo: unmark these codes
-                # return {
-                #     'status': 'fail',
-                #     'errorMsg': str(e)
-                # }
-                raise e
+                return {
+                    'status': 'fail',
+                    'errorMsg': str(e)
+                }
 
         return decorated
 
@@ -189,7 +186,6 @@ def updateUserInfo(user: user_account_info = None, **kwargs):
 def modifyPassword(user:user_account_info=None,rawPwdHash=None,newPwdHash=None,**kwargs):
     if not bcrypt.checkpw(rawPwdHash.encode(),user.password_hash.encode()):
         raise Exception("incorrect password")
-    # todo: 理论上这个加盐哈希应当完全由后端来做
     user.password_hash = newPwdHash
     user.save()
     return {'status':'success'}
@@ -205,7 +201,6 @@ def getUserId(user:user_account_info=None, **kwargs):
                 'id':user.uid,
                 'name':user.name,
                 'checkrole':user.get_role_display(),
-                'warehouserole':user.get_role_warehouse_display()
             } for user in user_account_info.objects.all()
         ]
     }

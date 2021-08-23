@@ -10,7 +10,6 @@
               <div class="card-header">
                   <div class="card-title">
                       <div class="card-title">选择用户</div>
-                      <!--todo:添加用户的具体逻辑是什么，添加的是用户名还是用户id，新用户如何选择车间-->
 <!--                      <a href="javascript:void(0);" @click = "changeMordifychoose()">选择用户</a> |-->
 <!--                      <a href="javascript:void(0);" @click = "changeMordify()">添加用户</a>-->
                   </div>
@@ -20,7 +19,7 @@
                       <div class="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
                           <div class="form-group" v-show="myform.modify">
                              <select class="custom-select" value="default" v-model="myform.userid" @click="findRole()">
-                                 <option v-for="(item,k) in useridform" :key="k" :value="item.id">{{item.name}}</option>    	<!--fixme: 显示用户名较为合理，同时设置:value为用户id-->
+                                 <option v-for="(item,k) in useridform" :key="k" :value="item.id">{{item.name}}</option>
                              </select>
                           </div>
                           <div class="form-group" v-show="!myform.modify">
@@ -41,9 +40,9 @@
                       <div class="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
                           <div class="form-group">
                              <select class="custom-select" v-model="myform.checkrole" >
-                                 <option value="admin">用户管理员</option>
-                                 <option value="super_editor">厂长</option>
-                                 <option value="viewer">普通员工</option> <!--fixme: 这里使用click是不会触发的 -->
+                                 <option value="admin">主管</option>
+                                 <option value="super_editor">用户管理员</option>
+                                 <option value="viewer">员工</option>
                              </select>
                           </div>
                       </div>
@@ -87,7 +86,7 @@ export default {
           myform:{
               checkrole:"",
               userid:"",
-              modify:true, // fixme: mordify -> modify
+              modify:true,
               relations: [
                   // {
                   //     workshopId: "车间一",
@@ -125,7 +124,7 @@ export default {
             }
         }
 
-        if(this.myform.checkrole === 'viewer') this.getRelations() // fixme: 判断是否是viewer，更新relations信息
+        if(this.myform.checkrole === 'viewer') this.getRelations()
       },
       getUserId:function(){
           UserApi.getUserId(
@@ -151,9 +150,9 @@ export default {
       },
       getRelations:function (){
           console.log("OK")
-          this.myform.relations = [] //fixme: 将列表初始化为空
+          this.myform.relations = []
           for (var i = 0; i < this.workshopform.length;i++){
-              this.myform.relations.push({}) //fixme: this.relations -> this.myform.relations
+              this.myform.relations.push({})
               this.myform.relations[i]["workshopId"] = this.workshopform[i]["id"]
               for (var j = 0; j < this.relationshipform.length;j++) {
                   this.myform.relations[i]["checked"] = false
@@ -164,12 +163,11 @@ export default {
               }
           }
       },
-      // todo: 有时候未选中的workshop中没有‘checked’键，会导致提交失败
       submitRelatonship:function () {
-          WorkshopApi.submitRelatonship(this.myform) // fixme: 我把这个API移到了workshop中
+          WorkshopApi.submitRelatonship(this.myform)
       }
     },
-    mounted() { // fixme: 挂载组件之后应当调用GetUserId，否则useridform是空的，无法选择用户；workshop同理
+    mounted() {
         this.getUserId()
         this.getAllWorkshopsId()
     }

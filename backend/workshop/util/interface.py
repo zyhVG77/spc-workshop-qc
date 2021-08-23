@@ -54,7 +54,7 @@ def getProducts(user: user_account_info = None, **kwargs):
     if user.role == RoleChoices.ADMIN:
         productInfos = product_info.objects.all()
     else:
-        productInfos = product_info.objects.filter(measure_plans__workshop__workers=user)  # todo: check if right
+        productInfos = product_info.objects.filter(measure_plans__workshop__workers=user)
 
     for productInfo in productInfos:
         product = _getProduct(productInfo, None if user.role == RoleChoices.ADMIN else user)
@@ -80,7 +80,6 @@ def alterProducts(user: user_account_info = None, product=None, modify=None, **k
             productInfo = alterProduct(productId, **product)
             parameters = product.pop('parameters')
             for parameter in parameters:
-                # todo: value_type in frontend is inconsistent with backened
                 parameter['value_type'] = {'variable_data': 0, 'attribute_data': 1}[parameter['value_type']]
                 parameter['graph_type'] = GraphTypeChoices.labels.index(parameter['graph_type'])
                 alterParameter(parameter.pop('id'), **parameter)
@@ -101,7 +100,6 @@ def alterProducts(user: user_account_info = None, product=None, modify=None, **k
             productId = productInfo.uid
             parameters = product.pop('parameters')
             for parameter in parameters:
-                # todo: value_type in frontend is inconsistent with backened
                 parameter['value_type'] = {'variable_data': 0, 'attribute_data': 1}[parameter['value_type']]
                 parameter['graph_type'] = GraphTypeChoices.labels.index(parameter['graph_type'])
                 addParameter(product_id=productId,
@@ -213,7 +211,6 @@ def deleteWorkshop(user: user_account_info = None, id=None, **kwargs):
 
 @verify_decorator()
 def getControlGraph(user: user_account_info = None, **kwargs):
-    # todo: check if right
     if user.role != RoleChoices.ADMIN and not user.workshops.filter(measure_plan__uid=kwargs['measure_plan_id']):
         raise Exception('unauthorized operation')
 
@@ -240,7 +237,6 @@ def getControlGraph(user: user_account_info = None, **kwargs):
         }
 
     response = {'status': 'success'}
-    # todo: bugs here
     if 'tmp_point_id' in kwargs and graph.point_ids[-1] == kwargs.pop('tmp_point_id') and False:
         response['updated'] = False
     else:
@@ -287,7 +283,6 @@ def getAllExceptionReports(user: user_account_info = None, **kwargs):
 def getDetailReport(user: user_account_info = None, id=None, **kwargs):
     abnormalityInfo = abnormality_info.objects.get(uid=id[0])  # args from GET is always a list
 
-    # todo: check if right
     if user.role != RoleChoices.ADMIN and user.workshops.filter(measure_plan__uid=abnormalityInfo.measure_plan_id):
         raise Exception('unauthorized operation')
 
@@ -337,7 +332,6 @@ def getAllWorkshopsId(user:user_account_info=None, **kwargs):
         ]
     }
 
-# todo: 需要更进一步的讨论，关于用户添加
 @verify_decorator()
 def submitRelationship(user:user_account_info=None, **kwargs):
     if user.role != RoleChoices.ADMIN:

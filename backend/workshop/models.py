@@ -127,7 +127,7 @@ class measure_plan_info(models.Model):
         return self.uid
 
 class workshop_info(models.Model):
-    # 车间和测量计划严格绑定 todo: 删除车间时也要删除测量计划
+    # 车间和测量计划严格绑定
     measure_plan = models.OneToOneField(measure_plan_info, on_delete=models.CASCADE,
                                         primary_key=True,related_name='workshop',
                                         help_text='测量计划'

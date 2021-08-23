@@ -1,14 +1,9 @@
 from django.urls import include, path
-from django.shortcuts import render
-from workshop.util.graphCheck import getGraph
 from django.http.response import JsonResponse
 from django.http.request import HttpRequest
 from workshop.util.interface import *
-
-def get_graph(request): # 这个用于测试, 无实际意义
-    data = getGraph('00000000003','00000000003')
-    content = data.generateReportDict()
-    return render(request, 'Report.html', content)
+from workshop.util.opcua import UaClient
+client = UaClient('Workshop')
 
 def test(request:HttpRequest):
     print(request.body.decode())
@@ -36,10 +31,10 @@ workshop_patterns = [
     path('GetAllProducts',lambda request:myJsonResponse(getProducts(request))),
     path('SubmitProduct',lambda request:myJsonResponse(alterProducts(request))),
     path('DeleteProduct',lambda request:myJsonResponse(deleteProduct(request))),
-    path('GetControlGraph',GetControlGraph),#todo : modify to this => ,lambda request:myJsonResponse(getControlGraph(request))),
+    path('GetControlGraph',GetControlGraph),
     path('GetAllExceptionReports',lambda request:myJsonResponse(getAllExceptionReports(request))),
-    # path('GetReportDetailHtml',lambda request:getDetailReport(request)), # todo: not Json Response
-    path('GetReportDetailHtml', lambda request:myJsonResponse(getDetailReport(request))),  # todo: not Json Response
+    # path('GetReportDetailHtml',lambda request:getDetailReport(request)),
+    path('GetReportDetailHtml', lambda request:myJsonResponse(getDetailReport(request))),
 
     path('GetAllWorkshopsInfo',lambda request:myJsonResponse(getAllWorkshopInfo(request))),
     path('SubmitWorkshop',lambda request:myJsonResponse(alterWorkshops(request))),
@@ -51,6 +46,5 @@ workshop_patterns = [
 ]
 
 urlpatterns = [
-    path('test',get_graph),
     path('',include(workshop_patterns))
 ]

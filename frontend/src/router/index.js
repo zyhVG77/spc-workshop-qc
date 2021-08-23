@@ -9,11 +9,6 @@ export const constantRouterMap = [
     name: 'Login',
     component: () => import('@/views/common/Login')
   },
-  {
-    path: '/test',
-    name: 'Test',
-    component: () => import('@/views/warehouse/ControlGraph')
-  }
 ]
 
 export const asyncRouterMap = [
@@ -95,101 +90,6 @@ export const asyncRouterMap = [
           role: ['admin', 'super_editor', 'viewer'],
           isSidebarItem: false,
           subsystem: 'workshop'
-        }
-      },
-      {
-        path: 'kanban',
-        name: 'Kanban',
-        component: () => import('@/views/warehouse/Kanban'),
-        meta: {
-          role: ['admin', 'warehouse_keeper'],
-          isSidebarItem: true,
-          subsystem: 'warehouse',
-          sidebarInfo: {
-            name: '仓库看板',
-            iconClass: 'icon-laptop_windows'
-          }
-        }
-      },
-      {
-        path: 'storageCellGraph',
-        component: () => import('@/views/warehouse/StorageCells'),
-        meta: {
-          role: ['admin', 'warehouse_keeper'],
-          isSidebarItem: true,
-          subsystem: 'warehouse',
-          sidebarInfo: {
-            name: '储位管理',
-            iconClass: 'icon-layers'
-          }
-        }
-      },
-      {
-        path: 'PutInForm',
-        component: () => import('@/views/warehouse/PutInForm'),
-        meta: {
-          role: ['admin', 'super_editor', 'viewer'],
-          isSidebarItem: true,
-          subsystem: 'warehouse',
-          sidebarInfo: {
-            name: '填写入库单',
-            iconClass: 'icon-check'
-          }
-        }
-      },
-      {
-        path: 'TakeOutForm',
-        component: () => import('@/views/warehouse/TakeOutForm'),
-        meta: {
-          role: ['admin', 'super_editor', 'viewer'],
-          isSidebarItem: true,
-          subsystem: 'warehouse',
-          sidebarInfo: {
-            name: '填写出库单',
-            iconClass: 'icon-local_shipping'
-          }
-        }
-      },
-      {
-        path: 'warehouseProductManager',
-        name: 'WarehouseProductManager',
-        component: () => import('@/views/warehouse/ProductManager'),
-        meta: {
-          role: ['admin', 'warehouse_keeper'],
-          isSidebarItem: true,
-          subsystem: 'warehouse',
-          sidebarInfo: {
-            name: '零件管理',
-            iconClass: 'icon-camera1'
-          }
-        }
-      },
-      {
-        path: 'measureSchedule',
-        name: 'measureSchedule',
-        component: () => import('@/views/warehouse/MeasureSchedule'),
-        meta: {
-          role: ['admin', 'warehouse_keeper'],
-          isSidebarItem: true,
-          subsystem: 'warehouse',
-          sidebarInfo: {
-            name: '测量计划管理',
-            iconClass: 'icon-pencil'
-          }
-        }
-      },
-      {
-        path: 'controlGraphWarehouse',
-        name: 'ControlGraphWarehouse',
-        component: () => import('@/views/warehouse/ControlGraph'),
-        meta: {
-          role: ['admin', 'warehouse_keeper'],
-          isSidebarItem: true,
-          subsystem: 'warehouse',
-          sidebarInfo: {
-            name: '质量控制',
-            iconClass: 'icon-flash_auto'
-          }
         }
       },
       {

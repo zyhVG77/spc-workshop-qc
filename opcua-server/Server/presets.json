@@ -1,101 +1,52 @@
 {
   "Workshop": {
     "Device001": {
-      "measure_plan_id": "MP#00001",
+      "measure_plan_id": "00000000006",
       "batch_size": 5,
-      "parameter_number": 4,
-      "parameter_info": [
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        }
-      ]
-    },
-    "Device002": {
-      "measure_plan_id": "MP#00002",
-      "batch_size": 5,
-      "parameter_number": 4,
-      "parameter_info": [
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        }
-      ]
-    }
-  },
-  "Warehouse": {
-    "Device001": {
-      "measure_plan_id": "MP#00001",
-      "batch_size": 10,
-      "parameter_number": 4,
-      "parameter_info": [
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        },
-        {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
-        }
-      ]
-    },
-    "Device002": {
-      "measure_plan_id": "MP#00002",
-      "batch_size": 20,
       "parameter_number": 2,
       "parameter_info": [
         {
-          "usl": 3,
-          "lsl": 1,
-          "scale": 2
+          "usl": 100,
+          "lsl": 10,
+          "scale": 1
         },
         {
-          "usl": 3,
-          "lsl": 1,
+          "usl": 100,
+          "lsl": 60,
+          "scale": 2
+        }
+      ]
+    },
+    "Device002": {
+      "measure_plan_id": "00000000007",
+      "batch_size": 5,
+      "parameter_number": 2,
+      "parameter_info": [
+        {
+          "usl": 100,
+          "lsl": 10,
+          "scale": 1
+        },
+        {
+          "usl": 100,
+          "lsl": 60,
+          "scale": 2
+        }
+      ]
+    },
+    "Device003": {
+      "measure_plan_id": "00000000008",
+      "batch_size": 5,
+      "parameter_number": 2,
+      "parameter_info": [
+        {
+          "usl": 505,
+          "lsl": 495,
+          "scale": 1
+        },
+        {
+          "usl": 11,
+          "lsl": 9,
           "scale": 2
         }
       ]

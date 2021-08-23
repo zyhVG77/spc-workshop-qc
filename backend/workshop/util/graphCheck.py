@@ -706,9 +706,6 @@ def getGraph(measure_plan_id, control_plan_id, history_points=None):
     control_plan = control_plan_info.objects.get(uid=control_plan_id)
     measure_plan = measure_plan_info.objects.get(uid=measure_plan_id)
 
-    # todo: disable this
-    uploadData(measurePlanUpdator(measure_plan).generateForm())
-
     if not history_points:
         history_points = control_point_info.objects.filter(control_plan_id=control_plan_id,
                                                            measure_form__measure_plan_id=measure_plan_id).order_by('-uid')[

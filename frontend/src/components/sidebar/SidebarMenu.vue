@@ -26,16 +26,6 @@
           <span class="menu-text">{{ item.name }}</span>
         </router-link>
       </li>
-
-      <li v-show='this.$store.getters["user/currentUser"].role === "admin"'>
-        <a href="javascript: void(0);" @click="changeSubSystem">
-          <i class="icon-corner-down-right"></i>
-          <span class="menu-text">
-            进入{{ currentSubSys==='workshop'?"仓储":"车间"}}管理
-          </span>
-        </a>
-      </li>
-
     </ul>
   </div>
 </template>
@@ -113,29 +103,17 @@ export default {
       this.currentActiveTag = RegExp.$1
       console.log(this.currentActiveTag)
     },
-    changeSubSystem: function () {
-      this.$store.dispatch("subsystem_state/changeSubSys")
-          .then(to => {
-            if (to === 'workshop')
-              this.$router.push('/home/controlGraph/0/0')
-            else
-              this.$router.push('/home/kanban')
-          })
-          .catch(() => {})
-      // Refresh router-view
-      // this.$router.push('/home')
-    }
   },
   mounted() {
     // If current subsystem is workshop
     // Gotta fetch all the products first
     if (this.$store.getters['subsystem_state/current_sub_sys'] === 'workshop') {
       this.$store.dispatch('products/getAllProducts')
-          .then(products => {
-            if (products.length > 0 && products[0].parameters.length > 0) {
-              this.$router.push('/home/controlGraph/0/0')
-            }
-          })
+        .then(products => {
+          if (products.length > 0 && products[0].parameters.length > 0) {
+            this.$router.push('/home/controlGraph/0/0')
+          }
+        })
     }
   }
 }

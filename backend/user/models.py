@@ -23,9 +23,6 @@ class user_account_info(models.Model):
     role = models.IntegerField(choices=RoleChoices.choices,
                                help_text='权限角色'
                                )
-    role_warehouse = models.IntegerField(choices=RoleChoices.choices,
-                               help_text='仓储权限角色'
-                               )
 
     def __str__(self):
         return self.name
