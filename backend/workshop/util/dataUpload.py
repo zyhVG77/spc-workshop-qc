@@ -17,7 +17,10 @@ def _generatePoint(control_plan_id, measure_form_id, form, par, model, last_meas
         control_point.x = np.mean(sample)
         control_point.s = np.std(sample)
         if last_measure_form:
-            last_data = last_measure_form.parameter_datas.get(id=par.uid)
+            # todo: IM-R
+            # last_data = last_measure_form.parameter_datas.get(id=par.uid)
+            # last_data = last_measure_form.parameter_datas.filter(parameter__uid=par.uid).last()
+            last_data = last_measure_form.parameter_datas.get(parameter__uid=par.uid)
             last_data = last_data.value
             control_point.r = abs(last_data - sample[0])
         else:
@@ -57,18 +60,25 @@ def uploadData(form):
             raise Exception('sample size unqualified')
 
         pars = measure_plan.product.parameters.order_by('parameter_id')
-        measure_form = measure_form_info(next(measure_form_uid), measure_form_id,
+        # measure_form = measure_form_info(next(measure_form_uid), measure_form_id,
+        #                                  measure_plan_id, sample_size, start_time, end_time, operator_id)
+        measure_form = measure_form_info(measure_form_id, measure_form_id,
                                          measure_plan_id, sample_size, start_time, end_time, operator_id)
         measure_form.save()
 
         for par in pars:
             control_plan = par.control_plan
+            # if measure_plan.current_uid:
             _generatePoint(control_plan.uid, measure_form.uid, form, par, control_plan.type,
-                           measure_plan.measure_forms.get(
-                               uid=measure_plan.current_uid) if control_plan.type == 2 else None)
+                       measure_plan.measure_forms.get(
+                           uid=measure_plan.current_uid) if control_plan.type == 2 else None)
+            # else:
+            #     _generatePoint(control_plan.uid, measure_form.uid, form, par, control_plan.type, None)
+
             history_points = control_point_info.objects.filter(control_plan=control_plan,
                                                                measure_form__measure_plan=measure_plan).order_by(
                 '-uid')[:measure_plan.batch_count]
+            # print(control_plan.get_type_display())
             graph = graphType[control_plan.get_type_display()](measure_plan, control_plan, history_points)
             graph.getData()
             graph.analyze()

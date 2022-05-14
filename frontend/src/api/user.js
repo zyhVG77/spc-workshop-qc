@@ -31,8 +31,9 @@ const UserApi = {
     updateUserInfo: function (user, success, fail, error) {
         axios.post('/api/user/UpdateUserInfo', user)
             .then(resp => {
-                if (resp.data.status === 'success')
+                if (resp.data.status === 'success') {
                     success(resp.data.user)
+                }
                 else
                     fail(resp.data.errorMsg)
             })

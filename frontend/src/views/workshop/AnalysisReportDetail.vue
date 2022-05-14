@@ -36,21 +36,17 @@
             <button type="button" class="btn btn-primary float-right" @click="toReportPage">查看异常报告</button>
           </div>
         </div>
-        <HintMessage ref="error" :hintMsg="hintMsg" :isError="true"></HintMessage>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import HintMessage from "@/components/utils/HintMessage";
 
 export default {
   name: "AnalysisReportDetail",
-  components: {HintMessage},
   data: function () {
     return {
-      hintMsg: '',
       loading: false
     }
   },

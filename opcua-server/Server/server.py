@@ -1,17 +1,68 @@
-import uuid
+from opcua import ua, Server, Node
+from IPython import embed
 import logging
 import sys
 import json
 from plc_simulator import PlcSimulator
+from machine_simulator import MachineSimulator
 
 sys.path.insert(0, "..")
 
-from IPython import embed
-from opcua import ua, Server, Node
 
-PRESET_FILE_PATH = 'presets.json'
-DATA_SLOT_NUMBER = 10
-DATA_SLOT_NUMBERING_START = 0
+PRESET_FILE_PATH = r'D:\School\SpcWorkshop\SpcApp\opcua-server\Server\presets.json'
+
+
+class SimulationOps:
+    def __init__(self, plc_simulators: list, machine_simulators: list):
+        self.plc_simulators = plc_simulators
+        self.machine_simulators = machine_simulators
+
+    def measure_once(self):
+        for s in self.plc_simulators:
+            s.activate()
+
+    def measure_continuously(self, idx=0):
+        if idx >= 0:
+            self.plc_simulators[idx].set_perpetual(True)
+            self.plc_simulators[idx].activate()
+        else:
+            for s in self.plc_simulators:
+                s.set_perpetual(True)
+                s.activate()
+
+    def set_measure_once(self):
+        for s in self.plc_simulators:
+            s.set_perpetual(False)
+
+    def pause_measure(self):
+        for s in self.plc_simulators:
+            s.pause()
+
+    def run_machine(self):
+        for m in self.machine_simulators:
+            m.activate()
+
+    def pause_machine(self):
+        for m in self.machine_simulators:
+            m.pause()
+
+    def set_machine_plan(self, i, p):
+        if i >= 0:
+            self.machine_simulators[i].set_plan(p)
+        else:
+            for m in self.machine_simulators:
+                m.set_plan(p)
+
+    def set_machine_default(self, i):
+        if i >= 0:
+            self.machine_simulators[i].set_default()
+        else:
+            for m in self.machine_simulators:
+                m.set_default()
+
+    def repair_machine(self):
+        for m in self.machine_simulators:
+            m.repair()
 
 
 class UaServer:
@@ -20,9 +71,10 @@ class UaServer:
         self.endpoint = 'opc.tcp://0.0.0.0:4840/'
         self.uri = 'https://github.com/zyhVG77/SpcApp.git'
         self.server = None
-        self.measure_plan_infos = None
-        self.data_slot_number = DATA_SLOT_NUMBER
-        self.simulators = dict()
+        self.plc_simulators = []
+        self.machine_simulators = []
+        self.simulator_ops = SimulationOps(
+            self.plc_simulators, self.machine_simulators)
 
         self.build_server()
 
@@ -41,41 +93,25 @@ class UaServer:
 
         # Load parameters & Create simulators
         with open(PRESET_FILE_PATH, 'r', encoding='utf-8') as f:
-            self.measure_plan_infos = json.loads(f.read())
-        # Create node for every machine in every subsystem
-        for subsys, info in self.measure_plan_infos.items():
-            folder: Node = _server.nodes.objects.add_folder(idx, subsys)
+            config = json.loads(f.read())
 
-            if subsys not in self.simulators:
-                self.simulators[subsys] = []
+        # measure machines
+        machines, info = list(config.items())[0]
+        folder: Node = _server.nodes.objects.add_folder(idx, machines)
+        for device, _info in info.items():
+            m: Node = folder.add_object(idx, device)
+            simulator = PlcSimulator(m, idx, _info)
+            self.plc_simulators.append(simulator)
+            simulator.start()
 
-            for device, _info in info.items():
-                m: Node = folder.add_object(idx, device)
-                m.add_property(idx, 'MeasurePlanId', _info['measure_plan_id'])
-                m.add_property(idx, 'OperatorId', ''.join(str(uuid.uuid4()).split('-')))
-                m.add_property(idx, 'State', 'shut')
-                m.add_variable(idx, 'ParameterNumber', _info['parameter_number'], ua.VariantType.Int32)
-                m.add_variable(idx, 'BatchSize', _info['batch_size'], ua.VariantType.Int32)
-                data_slots: Node = m.add_folder(idx, 'DataSlot')
-                for i in range(self.data_slot_number):
-                    data_slots.add_variable(idx, 'v'+str(i+DATA_SLOT_NUMBERING_START), 0, ua.VariantType.Float)
-                # Create one simulator for one machine
-                simulator = PlcSimulator(m, idx, _info['parameter_info'])
-                self.simulators[subsys].append(simulator)
-                simulator.start()
-
-    def assign_task(self, sub_sys_name, perpetual=False):
-        for simulator in self.simulators[sub_sys_name]:
-            simulator.set_perpetual(perpetual)
-            simulator.activate()
-
-    def clear_perpetual_simulation(self, sub_sys_name):
-        for simulator in self.simulators[sub_sys_name]:
-            simulator.set_perpetual(False)
-
-    def pause_simulation(self):
-        for simulator in self.simulators['Workshop']:
-            simulator.pause()
+        # product machines
+        machines, info = list(config.items())[1]
+        folder: Node = _server.nodes.objects.add_folder(idx, machines)
+        for device, _info in info.items():
+            m: Node = folder.add_object(idx, device)
+            simulator = MachineSimulator(m, idx, _info)
+            self.machine_simulators.append(simulator)
+            simulator.start()
 
     def start(self):
         self.server.start()
@@ -88,6 +124,7 @@ if __name__ == "__main__":
     server = UaServer()
     server.start()
     print("Available loggers are: ", logging.Logger.manager.loggerDict.keys())
+    ops = server.simulator_ops
     try:
         embed()
     finally:

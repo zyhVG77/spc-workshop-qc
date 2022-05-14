@@ -4,3 +4,6 @@ venv
 /static/
 /templates/2.html
 /garbageBin/
+env
+.idea
+db.sqlite3

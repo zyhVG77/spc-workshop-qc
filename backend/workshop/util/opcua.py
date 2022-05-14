@@ -8,8 +8,10 @@ from queue import Queue
 from workshop.util.dataUpload import uploadData
 from workshop.util.utils import measure_form_uid
 import numpy as np
+import re
 
 from opcua import Client
+from opcua.client.ua_client import UaClient as TestUaClient
 
 
 class DataTransmitter(Thread):
@@ -46,13 +48,13 @@ class DataTransmitter(Thread):
                     'measure_plan': self.header['mid'],
                     'sample_size': self.header['bz'],
                     'operator_id': self.header['oid'],
-                    'start_time': self.start_time,
+                    'start_time': self.start_time if self.start_time else datetime.now(),
                     'end_time': datetime.now(),
                     'measure_form': self.measure_form.tolist()
                 }
                 # print(measure_form)
-                self.submit(measure_form, self.header['subsys'])   # Submit to spc server
-                count = 0   # reset
+                self.submit(measure_form, self.header['subsys'])  # Submit to spc server
+                count = 0  # reset
                 # Wakeup collectors
                 for collector in self.collectors:
                     collector.wakeup()
@@ -118,12 +120,19 @@ class DataTransmissionHandler:
 
 
 class UaClient(Thread):
-    def __init__(self, subsystem):
+    def __init__(self, url=None):
         Thread.__init__(self)
         # client = Client("opc.tcp://admin@localhost:4840/warehouse/server/") # Connect using a user
-        self.client = Client("opc.tcp://localhost:4840/")
-        self.subsystem = subsystem
+        self.client = None
+        if url:
+            self.client = Client(url)
+
+    def connect(self, url):
+        self.client = Client(url)
         self.init()
+
+    def disconnect(self):
+        self.client.disconnect()
 
     def init(self):
         _client = self.client
@@ -138,7 +147,7 @@ class UaClient(Thread):
         uri = "https://github.com/zyhVG77/SpcApp.git"
         idx = _client.get_namespace_index(uri)
 
-        machines = root.get_child(['0:Objects', '{}:{}'.format(idx, self.subsystem)]).get_children()
+        machines = root.get_child(['0:Objects', '{}:MeasureMachine'.format(idx)]).get_children()
 
         # Create one handler for one machine
         handlers = []
@@ -149,12 +158,13 @@ class UaClient(Thread):
                 'mid': machine.get_child(['{}:MeasurePlanId'.format(idx)]).get_value(),
                 'pn': machine.get_child(['{}:ParameterNumber'.format(idx)]).get_value(),
                 'bz': machine.get_child(['{}:BatchSize'.format(idx)]).get_value(),
-                'subsys': self.subsystem
+                'subsys': "Workshop"
             }
             parameter_number = header['pn']
             state = machine.get_child(['{}:State'.format(idx)])
             # Get all slots used
-            data_slots = [slot for slot in machine.get_child(['{}:DataSlot'.format(idx)]).get_children()][:parameter_number]
+            data_slots = [slot for slot in machine.get_child(['{}:DataSlot'.format(idx)]).get_children()][
+                         :parameter_number]
             # Create indices for every slot with their number
             indices = {node.nodeid: i for i, node in enumerate(data_slots)}
             # Subscribe machine state change
@@ -168,12 +178,71 @@ class UaClient(Thread):
             subscriptions.append(_client.create_subscription(500, handler).subscribe_data_change(state))
             handlers.append(handler)
 
-    def disconnect(self):
-        self.client.disconnect()
+    def get_prod_info(self):
+        _client = self.client
+        root = _client.get_root_node()
+        uri = "https://github.com/zyhVG77/SpcApp.git"
+        idx = _client.get_namespace_index(uri)
+        machines = root.get_child(['0:Objects', '{}:ProductMachine'.format(idx)]).get_children()
+        infos = []
+        for m in machines:
+            anton_node = m.get_child(['{}:Anton'.format(idx)])
+            anton_info = {
+                'State1': anton_node.get_child(['{}:State1'.format(idx)]).get_value(),
+                'State2': anton_node.get_child(['{}:State2'.format(idx)]).get_value(),
+                'Description': anton_node.get_child(['{}:Description'.format(idx)]).get_value(),
+                'Handle': anton_node.get_child(['{}:Handle'.format(idx)]).get_value(),
+                'BeginTime': anton_node.get_child(['{}:BeginTime'.format(idx)]).get_value(),
+            }
+            infos.append({
+                'Name': str(m.get_browse_name()).split(':')[1].rstrip(')'),
+                'Id': m.get_child(['{}:Id'.format(idx)]).get_value(),
+                'MeasurePlanId': m.get_child(['{}:MeasurePlanId'.format(idx)]).get_value(),
+                'State': m.get_child(['{}:State'.format(idx)]).get_value(),
+                'Plan': m.get_child(['{}:Plan'.format(idx)]).get_value(),
+                'Done': m.get_child(['{}:Done'.format(idx)]).get_value(),
+                'Anton': anton_info
+            })
+        return infos
+
+    def getInformationModel(self):
+        _client = self.client
+        root = _client.get_root_node()
+        uri = "https://github.com/zyhVG77/SpcApp.git"
+        idx = _client.get_namespace_index(uri)
+
+        measure_info = []
+        machines = root.get_child(['0:Objects', '{}:MeasureMachine'.format(idx)]).get_children()
+        for m in machines:
+            measure_info.append({
+                'name': str(m.get_browse_name()).split(':')[1].rstrip(')'),
+                'measurePlanId': m.get_child(['{}:MeasurePlanId'.format(idx)]).get_value(),
+                'operatorId': m.get_child(['{}:OperatorId'.format(idx)]).get_value(),
+                'parameterNumber': m.get_child(['{}:ParameterNumber'.format(idx)]).get_value(),
+            })
+        return {
+            'measure': measure_info,
+            'production': self.get_prod_info()
+        }
+
+
+# Utils
+def testUaConnection(url: str):
+    match = re.search(r'^opc.tcp://(\w+?):(\d+?)/?$', url)
+    if match is None:
+        return False
+    client = TestUaClient()
+    try:
+        client.connect_socket(match.group(1), int(match.group(2)))
+        client.disconnect_socket()
+    except Exception as e:
+        return False
+    return True
 
 
 if __name__ == "__main__":
-    client = UaClient('Workshop')
+    client = UaClient()
+    print(client.get_prod_info())
     try:
         pass
     finally:

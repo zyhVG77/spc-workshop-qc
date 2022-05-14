@@ -518,8 +518,8 @@ class Xbar_s(Graph):
 
 
 class I_MR(Xbar_R):
-    def __init__(self, measure_plan: measure_plan_info, control_plan: control_plan_info, **kwargs):
-        super().__init__(measure_plan, control_plan, **kwargs)
+    def __init__(self, measure_plan: measure_plan_info, control_plan: control_plan_info, history_points, **kwargs):
+        super().__init__(measure_plan, control_plan, history_points, **kwargs)
         assert len(self._original_points)
 
     @property
@@ -546,12 +546,17 @@ class I_MR(Xbar_R):
         self._lslx = self._control_plan.lsl
 
         self._clr = np.average(self._pointr)
-        self._uclr = SPC_parameters['IMR']['D4'][size] * self._clr
-        self._lclr = SPC_parameters['IMR']['D3'][size] * self._clr
+
+        # self._uclr = SPC_parameters['IMR']['D4'][size] * self._clr
+        # self._lclr = SPC_parameters['IMR']['D3'][size] * self._clr
+        self._uclr = 3.267 * self._clr
+        self._lclr = 0
 
         self._clx = np.average(self._pointx)
-        self._uclx = self._clx + SPC_parameters['XR']['E2'][size] * self._clr
-        self._lclx = self._clx - SPC_parameters['XR']['E2'][size] * self._clr
+        # self._uclx = self._clx + SPC_parameters['XR']['E2'][size] * self._clr
+        # self._lclx = self._clx - SPC_parameters['XR']['E2'][size] * self._clr
+        self._uclx = self._clx + 2.66 * self._clr
+        self._lclx = self._clx - 2.66 * self._clr
 
         uRange = self._uclx - self._clx
         lRange = self._clx - self._lclx

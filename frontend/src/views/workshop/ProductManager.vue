@@ -204,7 +204,7 @@ export default {
         return ['p', 'np', 'u', 'c']
       if (!this.modifyData.selected)
         return ['Xbar-s', 'Xbar-R', 'I-MR']
-      if (para.graph_type !== 'IMR')
+      if (para.graph_type !== 'I-MR')
         return ['Xbar-s', 'Xbar-R']
       return ['I-MR']
     },

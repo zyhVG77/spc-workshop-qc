@@ -1,7 +1,7 @@
 <template>
   <body class="page-wrapper">
   <Sidebar></Sidebar>
-  <div class="page-content">
+  <div class="page-content my-wrapper">
     <HeaderBar></HeaderBar>
     <router-view></router-view>
   </div>
@@ -19,4 +19,11 @@ export default {
 </script>
 
 <style scoped>
+@import '../assets/css/main.css';
+@import '../assets/fonts/style.css';
+@import '../assets/css/style-default.css';
+
+.my-wrapper {
+  padding-left: 16%;
+}
 </style>

@@ -127,8 +127,8 @@ def getUserInfo(user: user_account_info = None, **kwargs):
     return response
 
 # default password: 123456
-def _addUser(name,password='$2a$10$mp0OfeLbviY2cePyMX.S1uwvzvBI4pdu5zYVQ/t/iaEQwrOEv/byO',role=RoleChoices.VIEWER,role_warehouse=RoleChoices.VIEWER,fullname=None,email=None,phone=None,work_id=None,avatar=None):
-    user = user_account_info(next(user_uid),name,password,role,role_warehouse)
+def _addUser(name,password='$2a$10$mp0OfeLbviY2cePyMX.S1uwvzvBI4pdu5zYVQ/t/iaEQwrOEv/byO',role=RoleChoices.VIEWER,fullname=None,email=None,phone=None,work_id=None,avatar=None):
+    user = user_account_info(next(user_uid),name,password,role)
     user.save()
     user_inf = user_info(user.uid,fullname,email,phone,work_id,avatar)
     user_inf.save()
@@ -155,14 +155,16 @@ def updateUserInfo(user: user_account_info = None, **kwargs):
         userInfo.save()
         response = {
             'status': 'success',
-            'id': userId,
-            'avatar': userInfo.avatar,
-            'email': userInfo.email,
-            'fullname': userInfo.fullname,
-            'phone': userInfo.phone,
-            'role': kwargs.pop('role'),
-            'username': kwargs.pop('username'),
-            'workId': userInfo.work_id
+            'user': {
+                'id': userId,
+                'avatar': userInfo.avatar,
+                'email': userInfo.email,
+                'fullname': userInfo.fullname,
+                'phone': userInfo.phone,
+                'role': kwargs.pop('role'),
+                'username': kwargs.pop('username'),
+                'workId': userInfo.work_id
+            }
         }
         return response
     except Exception as e:
@@ -171,14 +173,16 @@ def updateUserInfo(user: user_account_info = None, **kwargs):
         response = {
             'status': 'fail',
             'errorMsg': str(e),
-            'id': userId,
-            'avatar': userInfo.avatar,
-            'email': userInfo.email,
-            'fullname': userInfo.fullname,
-            'phone': userInfo.phone,
-            'role': kwargs.pop('role'),
-            'username': kwargs.pop('username'),
-            'workId': userInfo.work_id
+            'user': {
+                'id': userId,
+                'avatar': userInfo.avatar,
+                'email': userInfo.email,
+                'fullname': userInfo.fullname,
+                'phone': userInfo.phone,
+                'role': kwargs.pop('role'),
+                'username': kwargs.pop('username'),
+                'workId': userInfo.work_id
+            }
         }
         return response
 

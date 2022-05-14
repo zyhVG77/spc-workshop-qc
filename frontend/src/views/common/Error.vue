@@ -1,11 +1,12 @@
 <template>
-  <body class="page-wrapper">
+  <div class="main-container">
     <div class="page">
       <h1>{{ error_title }}</h1>
+      <div class="mb-4"></div>
       <h5>{{ error_message }}</h5>
-      <router-link to="/home" style="text-decoration: underline">返回主页</router-link>
+      <router-link to="/home/welcome" style="text-decoration: underline">返回主页</router-link>
     </div>
-  </body>
+  </div>
 </template>
 
 <script>
@@ -31,6 +32,6 @@ export default {
 <style scoped>
 .page {
   text-align: center;
-  margin-top: 10%
+  padding-top: 20%
 }
 </style>

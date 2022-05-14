@@ -56,6 +56,11 @@ export default {
       }
     };
   },
+  watch: {
+    range: function (newVal) {
+      this.$emit('change', newVal)
+    }
+  },
   methods: {
     submitDateRange: function () {
       this.$emit('submit-date-range', this.range)

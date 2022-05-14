@@ -8,7 +8,7 @@ export const constantRouterMap = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/common/Login')
-  },
+  }
 ]
 
 export const asyncRouterMap = [
@@ -21,6 +21,19 @@ export const asyncRouterMap = [
     name: 'Home',
     component: () => import('@/views/Home'),
     children: [
+      {
+        path: 'kanban',
+        component: () => import('@/views/workshop/Kanban'),
+        meta: {
+          role: ['admin', 'super_editor', 'viewer'],
+          isSidebarItem: true,
+          subsystem: 'workshop',
+          sidebarInfo: {
+            name: '车间看板',
+            iconClass: 'icon-laptop'
+          }
+        }
+      },
       {
         path: 'controlGraph/:proIndex/:parIndex',
         component: () => import('@/views/workshop/ControlGraph'),
@@ -93,6 +106,18 @@ export const asyncRouterMap = [
         }
       },
       {
+        path: 'opcuaManage',
+        component: () => import('@/views/workshop/OpcuaManage'),
+        meta: {
+          role: ['admin', 'super_editor', 'viewer'],
+          isSidebarItem: true,
+          sidebarInfo: {
+            name: 'OPC UA',
+            iconClass: 'icon-cloud_queue'
+          }
+        }
+      },
+      {
         path: 'accountSettings',
         component: () => import('@/views/common/AccountSettings'),
         meta: {
@@ -108,6 +133,11 @@ export const asyncRouterMap = [
         path: '404',
         name: 'Small404',
         component: () => import('@/views/common/Error')
+      },
+      {
+        path: 'welcome',
+        name: 'Welcome',
+        component: () => import('@/views/common/Welcome')
       }
     ],
     meta: {

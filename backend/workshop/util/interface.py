@@ -1,9 +1,12 @@
 from django.template import loader
 from workshop.util.utils import TEMPLATENAME
 from workshop.util.graphCheck import getGraph, getGraphByTime
-from workshop.util.sheduleMake import addProduct, addParameter, alterProduct, alterParameter, delProduct, alterWorkshop, addWorkshop, delWorkshop
+from workshop.util.sheduleMake import addProduct, addParameter, alterProduct, alterParameter, delProduct, alterWorkshop, \
+    addWorkshop, delWorkshop
 from workshop.models import *
-from user.util.interface import verify_decorator,_addUser
+from user.util.interface import verify_decorator, _addUser
+
+import workshop.util.opcua as UaUtil
 
 
 # ////////////////////////////////////////////////////////////
@@ -117,8 +120,6 @@ def alterProducts(user: user_account_info = None, product=None, modify=None, **k
     return response
 
 
-
-
 # GET METHOD
 @verify_decorator()
 def deleteProduct(user: user_account_info = None, id=None, **kwargs):
@@ -195,15 +196,15 @@ def alterWorkshops(user: user_account_info = None, workshop=None, modify=None, *
     return response
 
 
-
 # GET METHOD
 @verify_decorator()
 def deleteWorkshop(user: user_account_info = None, id=None, **kwargs):
     if user.role != RoleChoices.ADMIN:
         raise Exception('unauthorized operation')
 
-    delWorkshop(id[0]) # args from GET is always a list
+    delWorkshop(id[0])  # args from GET is always a list
     return {'status': 'success'}
+
 
 # ////////////////////////////////////////////////////////////
 # 控制图异常报告相关
@@ -255,7 +256,8 @@ def getAllExceptionReports(user: user_account_info = None, **kwargs):
         abnormalityInfos = abnormality_info.objects.order_by('if_read', '-uid')
     else:
         # abnormalityInfos = abnormality_info.objects.filter(measure_plan__workshop__worker=user).order_by('-uid')
-        abnormalityInfos = abnormality_info.objects.filter(measure_plan__workshop__workers=user).order_by('if_read', '-uid')
+        abnormalityInfos = abnormality_info.objects.filter(measure_plan__workshop__workers=user).order_by('if_read',
+                                                                                                          '-uid')
 
     for abnormalityInfo in abnormalityInfos:
         abnormalities.append(
@@ -299,58 +301,114 @@ def getDetailReport(user: user_account_info = None, id=None, **kwargs):
         'content': loader.render_to_string(TEMPLATENAME, graph.generateReportDict())
     }
 
+
 # ////////////////////////////////////////////////////////////
 # 权限管理相关
 # ////////////////////////////////////////////////////////////
 
 @verify_decorator()
-def getRelationshipForm(user:user_account_info=None, userid=None, **kwargs):
+def getRelationshipForm(user: user_account_info = None, userid=None, **kwargs):
     if user.role != RoleChoices.ADMIN:
         raise Exception('unauthorized operation')
     targetUser = user_account_info.objects.get(uid=userid[0])
     return {
-        'status':'success',
-        'relationshipform':[
+        'status': 'success',
+        'relationshipform': [
             {
-                'workshopid':workshop.measure_plan.uid,
-                'name':workshop.name
+                'workshopid': workshop.measure_plan.uid,
+                'name': workshop.name
             } for workshop in targetUser.workshops.all()
         ]
     }
 
+
 @verify_decorator()
-def getAllWorkshopsId(user:user_account_info=None, **kwargs):
+def getAllWorkshopsId(user: user_account_info = None, **kwargs):
     if user.role != RoleChoices.ADMIN:
         raise Exception('unauthorized operation')
     return {
-        'status':'success',
-        'workshopid':[
+        'status': 'success',
+        'workshopid': [
             {
-                'id':workshop.measure_plan.uid,
-                'name':workshop.name
+                'id': workshop.measure_plan.uid,
+                'name': workshop.name
             } for workshop in workshop_info.objects.all()
         ]
     }
 
+
 @verify_decorator()
-def submitRelationship(user:user_account_info=None, **kwargs):
+def submitRelationship(user: user_account_info = None, **kwargs):
     if user.role != RoleChoices.ADMIN:
         raise Exception('unauthorized operation')
     targetRole = RoleChoices.labels.index(kwargs['checkrole'])
     if not kwargs['modify']:
-        targetUser = _addUser(kwargs['userid'],role=targetRole)
+        targetUser = _addUser(kwargs['userid'], role=targetRole)
         if targetRole == RoleChoices.ADMIN or targetRole == RoleChoices.SUPEREDITOR:
-            return {'status':'success'}
+            return {'status': 'success'}
     else:
         targetUser = user_account_info.objects.get(uid=kwargs['userid'])
         if targetRole != RoleChoices.VIEWER:
             targetUser.role = targetRole
             targetUser.save()
-            return {'status':'success'}
+            return {'status': 'success'}
+        else:
+            targetUser.role = RoleChoices.VIEWER
+            targetUser.save()
 
     for relation in kwargs['relations']:
         if relation['checked']:
             targetUser.workshops.add(relation['workshopId'])
         else:
             targetUser.workshops.remove(relation['workshopId'])
-    return {'status':'success'}
+    return {'status': 'success'}
+
+
+# ////////////////////////////////////////////////////////////
+# 车间看板相关
+# ////////////////////////////////////////////////////////////
+
+@verify_decorator()
+def getKanbanInfo(client, **kwargs):
+    return {
+        'status': 'success',
+        'info': client.get_prod_info()
+    }
+
+
+@verify_decorator()
+def testUaConnection(address, **kwargs):
+    return {
+        'status': 'success',
+        'ok': UaUtil.testUaConnection(address)
+    }
+
+
+@verify_decorator()
+def connectUa(address, client, **kwargs):
+    print('hello')
+    client.connect(address)
+    return {
+        'status': 'success',
+        'ok': True
+    }
+
+
+@verify_decorator()
+def getInformationModel(client, **kwargs):
+    if client is None:
+        raise Exception('Ua Server not Connected')
+    return {
+        'status': 'success',
+        'model': client.getInformationModel()
+    }
+
+@verify_decorator()
+def deleteReport(id, user: user_account_info = None, **kwargs):
+    if user.role != RoleChoices.ADMIN:
+        raise Exception('unauthorized operation')
+    id = id[0]
+    abnormality_info.objects.get(uid=id).delete()
+    return {
+        'status': 'success'
+    }

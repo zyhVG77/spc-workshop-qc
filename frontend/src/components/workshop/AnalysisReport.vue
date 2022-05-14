@@ -18,7 +18,10 @@
         <p>异常点：{{ report.measure_form_id }}</p>
         <p>描述：{{ report.information }}</p>
         <p>原因：{{ report.reason }}</p>
-        <button class="btn btn-default" style="float:right; color: cornflowerblue" @click="seeDetail">查看详情</button>
+        <div class="form-group float-right">
+          <button class="btn btn-primary" @click="seeDetail">查看详情</button>
+          <button class="btn btn-danger" @click="$emit('delete')" v-show="this.$store.getters['user/currentUser'].role === 'admin'">删除异常</button>
+        </div>
       </div>
     </div>
     <!-- Detail End -->

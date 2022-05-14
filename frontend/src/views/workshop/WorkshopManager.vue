@@ -137,7 +137,7 @@
     </div>
     <div class="row gutters">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-        <button class="btn btn-primary btn-lg" @click="addWorkshop">添加新车间</button>
+        <button class="btn btn-primary float-right" @click="addWorkshop">添加新车间</button>
       </div>
     </div>
   </div>
@@ -241,6 +241,19 @@ export default {
             // # Warning! # INTERIM ADDITION
             // REMOVE LATER
             this.$store.dispatch('products/getAllProducts')
+            // Update workshop info
+            WorkshopApi.getAllWorkshopsInfo(
+                w => {
+                  console.log(w)
+                  this.workshops = w
+                },
+                err => {
+                  console.log(err)
+                  /*
+                      Handle Error Messages
+                   */
+                }
+            )
           },
           err => {
             this.modalHintMsg = err

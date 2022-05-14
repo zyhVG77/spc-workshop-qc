@@ -1,16 +1,14 @@
 <template>
   <header class="header">
-    <div></div>
-    <div class="header-items" >
-
+    <div class="header-items">
       <ul class="header-actions">
         <router-link to="/home/analysisReports" v-if="subsys === 'workshop'">
-          <i class="icon-calendar1"></i>
+          <i class="icon-file-text"></i>
         </router-link>
         <li class="dropdown d-none d-sm-block" v-if="subsys === 'workshop'">
           <a href="#" id="notifications" data-toggle="dropdown" aria-haspopup="true">
-            <i class="icon-bell"></i>
-            <span class="count-label"></span>
+            <i class="icon-flash"></i>
+            <span class="count-label blue"></span>
           </a>
           <div class="dropdown-menu dropdown-menu-right lrg scrollable-menu" aria-labelledby="notifications">
             <div class="dropdown-menu-header">异常警报 ({{ numberOfUnreadReports }})</div>
@@ -93,6 +91,10 @@ export default {
   height: auto;
   max-height: 400px;
   overflow-x: hidden;
+}
+
+header {
+  display: block;
 }
 
 </style>

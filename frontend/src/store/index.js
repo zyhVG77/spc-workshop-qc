@@ -7,6 +7,7 @@ import products from "./modules/products";
 import exceptions from "./modules/exceptions";
 import permission from "./modules/permission";
 import subsystem_state from "./modules/subsystem_state";
+import opcua from "./modules/opcua";
 
 Vue.use(Vuex)
 
@@ -35,6 +36,7 @@ const store = new Vuex.Store({
         exceptions,
         permission,
         subsystem_state,
+        opcua
     },
     // M#1 plugins: [userState],
 })

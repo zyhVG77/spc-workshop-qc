@@ -40,6 +40,9 @@ const mutations = {
         // in related Components
         state.all = null
         state.all = arr
+    },
+    deleteReport: function (state, idx) {
+        state.all.splice(idx, 1)
     }
 }
 
@@ -67,6 +70,21 @@ const actions = {
                 errorMsg => reject(errorMsg),
                 errorMsg => reject(errorMsg)
             )
+        })
+    },
+    deleteReport: function ({commit, state}, idx) {
+        return new Promise((resolve, reject) => {
+            WorkshopApi.deleteReport(state.all[idx].id)
+                .then(resp => {
+                    resp = resp.data
+                    if (resp.status === 'success') {
+                        commit('deleteReport', idx)
+                        resolve()
+                    }
+                    else
+                        reject(resp.errorMsg)
+                })
+                .catch(err => reject(err))
         })
     }
 }

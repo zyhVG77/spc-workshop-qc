@@ -107,8 +107,8 @@ def _alterMeasurePlan(plan_id, **kwargs):
     """
     measure_plan = measure_plan_info.objects.get(uid=plan_id)
 
-    if 'batch_count' in kwargs:
-        measure_plan.batch_count = kwargs.pop('batch_count')
+    if 'windowSize' in kwargs:
+        measure_plan.batch_count = kwargs.pop('windowSize')
     measure_plan.save()
 
     if DEBUG:

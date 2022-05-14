@@ -131,14 +131,16 @@ const WorkshopApi = {
             .catch(() => error('请求失败'))
     },
     //Submit the information of the user
-    submitRelatonship: function (data) {
-        axios.post('/api/workshop/submitRelationship',data)
+    submitRelatonship: function (data, success, error) {
+        axios.post('/api/workshop/submitRelationship', data)
             .then(resp => {
                 if (resp.data.status === 'success')
-                    console.log(resp);
+                    success()
+                else
+                    error(resp.data.errorMsg)
             })
             .catch(err => {
-                console.log(err.data.errorMsg);
+                error(err);
             })
     },
     //Get all existed workshops
@@ -151,6 +153,20 @@ const WorkshopApi = {
                     fail(resp.data.errorMsg)
             })
             .catch(() => error('请求失败'))
+    },
+    // Get kanban info
+    getKanbanInfo: function(success, error) {
+        axios.get('/api/workshop/GetKanbanInfo')
+            .then(resp => {
+                if (resp.data.status === 'success')
+                    success(resp.data.info)
+                else
+                    error(resp.data.errorMsg)
+            })
+            .catch(() => error('请求失败'))
+    },
+    deleteReport: function(id) {
+        return axios.get('/api/workshop/deleteReport', { params: { id }})
     }
 }
 

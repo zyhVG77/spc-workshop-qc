@@ -1,5 +1,6 @@
 <template>
-  <div class="sidebar-content sidebar-menu">
+  <div class="sidebar-menu list-unstyled">
+    <h5 class="sidenav-heading">Quality</h5>
     <ul>
       <li :class='["sidebar-dropdown", currentActiveTag === "controlGraph" ? "active" : ""]'
           v-show="currentSubSys === 'workshop'">
@@ -20,12 +21,14 @@
         </div>
       </li>
 
+      <h5 class="sidenav-heading">Production</h5>
       <li :class='currentActiveTag === item.id ? "active" : ""' v-for="(item, k) in menuItems" :key="k">
         <router-link :to="item.path">
           <i :class="item.iconClass"></i>
           <span class="menu-text">{{ item.name }}</span>
         </router-link>
       </li>
+
     </ul>
   </div>
 </template>
@@ -111,7 +114,7 @@ export default {
       this.$store.dispatch('products/getAllProducts')
         .then(products => {
           if (products.length > 0 && products[0].parameters.length > 0) {
-            this.$router.push('/home/controlGraph/0/0')
+            this.$router.push('/home/welcome')
           }
         })
     }

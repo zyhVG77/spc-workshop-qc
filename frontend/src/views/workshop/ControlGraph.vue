@@ -1,5 +1,11 @@
 <template>
   <div class="main-container">
+    <div id="loading-wrapper" v-show="loading">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+
     <div class="page-header">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">SPC控制监管</li>
@@ -59,7 +65,6 @@
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
         <div class="card">
           <div class="card-body">
-            <HintMessage ref="hint" :hintMsg="hintMsg" :isError="true"></HintMessage>
             <button type="button" class="btn btn-primary float-right" @click="getDynamicAnalysisReport">查看当前异常分析报告</button>
           </div>
         </div>
@@ -73,7 +78,6 @@
 import DateRangePicker from "@/components/workshop/DateRangePicker";
 import * as echarts from 'echarts/core';
 import WorkshopApi from "@/api/workshop";
-import HintMessage from "@/components/utils/HintMessage";
 
 // E-charts configuration
 import {
@@ -97,7 +101,7 @@ echarts.use(
 
 export default {
   name: "ControlGraph",
-  components: {HintMessage, DateRangePicker},
+  components: {DateRangePicker},
   data: function () {
     return {
       currentWorkshop: 0,
@@ -105,8 +109,8 @@ export default {
       myChart: null,
       int_id: null,
       dynamic: true,
-      hintMsg: '',
-      dateRange: null
+      dateRange: null,
+      loading: false
     }
   },
   computed: {
@@ -186,6 +190,8 @@ export default {
       })
     },
     getDynamicAnalysisReport: function () {
+      this.loading = true
+
       let req = Object.assign({}, this.requestTemplate)
       req.tmp_point_id = this.tmp_point_id
       req.analyze = true
@@ -204,10 +210,10 @@ export default {
             localStorage.setItem('analysisReportHtml', html)
             const { href } = this.$router.resolve({path: '/analysis_report_detail'})
             window.open(href, '_blank')
+            this.loading = false
           },
           err => {
-            this.hintMsg = err
-            this.$refs.hint.show()
+            this.$toast.error(err)
           })
     }
   },
@@ -227,6 +233,11 @@ export default {
     }
     this.startContinuousUpdating()
   },
+  // beforeCreate() {
+  //   if (!this.$store.getters['opcua/uaConnected']) {
+  //     this.$router.push('/home/opcuaManage')
+  //   }
+  // },
   beforeDestroy() {
     clearInterval(this.int_id)
   }

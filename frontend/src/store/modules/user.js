@@ -30,8 +30,6 @@ const mutations = {
         state.user = null
     },
     updateUser(state, user) {
-        console.log('Here in mutations')
-        console.log(user)
         state.user = user
     }
 }

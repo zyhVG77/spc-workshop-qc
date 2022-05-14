@@ -17,7 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/backend" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/opcua-server/Server" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.6 (SpcApp)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (backend) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

@@ -7,8 +7,7 @@ import VueAxios from 'vue-axios'
 
 import 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import '@/assets/css/main.css'
-import '@/assets/fonts/style.css'
+
 
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
@@ -47,7 +46,11 @@ router.beforeEach((to, from, next) => {
                             next({...to, replace: true})
                         })
                 })
-                .catch(err => console.log(err))
+                .catch(err => {
+                    console.log(err)
+                    store.dispatch('user/logout').then(() => {}).catch(() => {})
+                    next('login')
+                })
         } else {
             next()
         }
@@ -69,6 +72,10 @@ router.beforeEach((to, from, next) => {
  */
 import VCalendar from 'v-calendar'
 Vue.use(VCalendar);
+
+import VueToast from 'vue-toast-notification'
+import 'vue-toast-notification/dist/theme-sugar.css'
+Vue.use(VueToast)
 
 new Vue({
   router,

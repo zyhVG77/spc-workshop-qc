@@ -28,6 +28,12 @@
           <input type="url" class="form-control" id="website" placeholder="输入工号" v-model="userOnSetting.workId">
         </div>
       </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="website">头像URL</label>
+          <input type="url" class="form-control" placeholder="https://your.url" v-model="userOnSetting.avatar">
+        </div>
+      </div>
     </div>
     <div class="row gutters">
       <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -91,21 +97,20 @@ export default {
   },
   methods: {
     reset: function () {
-      this.userOnSetting = JSON.parse(JSON.stringify(this.user))
+      if (this.user)
+        this.userOnSetting = JSON.parse(JSON.stringify(this.user))
     },
     update: function () {
       this.$store.dispatch('user/updateUserInfo', this.userOnSetting)
           .then(() => {
-            /*
-                Now the user's information is updated,
-                it's needed to reset the 'userOnSetting'
-             */
-            this.userOnSetting = JSON.parse(JSON.stringify(this.user))
+            // Fetch new user info
+            this.reset()
             this.hintMsg.isError = false
             this.hintMsg.text = '修改成功！'
             this.$refs.hint.show()
           })
           .catch(err => {
+            console.log(err)
             this.hintMsg.isError = true
             this.hintMsg.text = err
             this.$refs.hint.show()
