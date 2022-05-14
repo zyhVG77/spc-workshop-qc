@@ -1,0 +1,84 @@
+{
+  "MeasureMachine": {
+    "Measure01": {
+      "measure_plan_id": "00000000000",
+      "batch_size": 5,
+      "parameter_number": 2,
+      "parameter_info": [
+        {
+          "usl": 13.45,
+          "lsl": 7.87,
+          "scale": 1
+        },
+        {
+          "usl": 11.39,
+          "lsl": 7.93,
+          "scale": 1
+        }
+      ]
+    },
+    "Measure02": {
+      "measure_plan_id": "00000000001",
+      "batch_size": 1,
+      "parameter_number": 1,
+      "parameter_info": [
+        {
+          "usl": 3522.0,
+          "lsl": 2336.0,
+          "scale": 1
+        }
+      ]
+    },
+    "Measure03": {
+      "measure_plan_id": "00000000002",
+      "batch_size": 5,
+      "parameter_number": 1,
+      "parameter_info": [
+        {
+          "usl": 42.358,
+          "lsl": 39.144,
+          "scale": 3
+        }
+      ]
+    },
+    "Measure04": {
+    "measure_plan_id": "00000000003",
+    "batch_size": 5,
+    "parameter_number": 2,
+    "parameter_info": [
+      {
+        "usl": 13.45,
+        "lsl": 7.87,
+        "scale": 1
+      },
+      {
+        "usl": 11.39,
+        "lsl": 7.93,
+        "scale": 1
+      }
+    ]
+  }
+ },
+  "ProductMachine": {
+    "Machine001": {
+      "id": "0001",
+      "measure_plan_id": "00000000000"
+    },
+    "Machine002": {
+      "id": "0002",
+      "measure_plan_id": "00000000000"
+    },
+    "Machine003": {
+      "id": "0003",
+      "measure_plan_id": "00000000001"
+    },
+    "Machine004": {
+      "id": "0004",
+      "measure_plan_id": "00000000002"
+    },
+    "Machine005": {
+      "id": "0005",
+      "measure_plan_id": "00000000003"
+    }
+  }
+}
